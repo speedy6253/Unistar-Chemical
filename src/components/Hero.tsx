@@ -137,7 +137,7 @@ export default function Hero({ onEnquireClick }: HeroProps) {
 
               {/* Premium Warehouse Wall Facade Signage */}
               <div className="absolute top-[12%] right-[10%] hidden md:flex items-center gap-3 bg-[#123C74]/5 backdrop-blur-[2px] border border-white/10 px-5 py-3 rounded-xl select-none pointer-events-none opacity-90 shadow-xs">
-                <img src="/assets/logo/unistar-logo.png" className="w-11 h-11 object-contain filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.15)]" alt="Logo" />
+                <img src="/assets/logo/unistar-logo.jpeg" className="w-11 h-11 object-contain filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.15)]" alt="Logo" />
                 <div className="flex flex-col text-left">
                   <span className="font-sans font-black text-[17px] text-[#123C74] tracking-wide leading-none uppercase">UNISTAR CHEMICALS</span>
                   <div className="flex items-center gap-1.5 mt-1">
@@ -149,7 +149,7 @@ export default function Hero({ onEnquireClick }: HeroProps) {
 
               {/* Realistic Vehicle Decal on the Tanker Body */}
               <div className="absolute top-[52%] left-[10%] hidden md:flex items-center gap-3 py-2 px-4 select-none pointer-events-none opacity-[0.85] rotate-[-1.5deg] mix-blend-multiply">
-                <img src="/assets/logo/unistar-logo.png" className="w-9 h-9 object-contain filter saturate-120" alt="Logo" />
+                <img src="/assets/logo/unistar-logo.jpeg" className="w-9 h-9 object-contain filter saturate-120" alt="Logo" />
                 <div className="flex flex-col text-left">
                   <span className="font-sans font-black text-[15px] text-[#123C74] tracking-wide leading-none uppercase">UNISTAR CHEMICALS</span>
                   <div className="flex items-center gap-1.5 mt-0.5">
@@ -161,7 +161,7 @@ export default function Hero({ onEnquireClick }: HeroProps) {
 
               {/* Clean Corporate Decal on Truck Cabin Door */}
               <div className="absolute bottom-[36%] right-[44%] hidden md:flex items-center gap-2 bg-white/30 backdrop-blur-[0.5px] border border-[#123C74]/10 px-2 py-1.5 rounded select-none pointer-events-none opacity-[0.88] scale-80 rotate-[-0.5deg]">
-                <img src="/assets/logo/unistar-logo.png" className="w-5 h-5 object-contain" alt="Logo" />
+                <img src="/assets/logo/unistar-logo.jpeg" className="w-5 h-5 object-contain" alt="Logo" />
                 <div className="flex flex-col text-left">
                   <span className="text-[7.5px] text-[#123C74] font-black tracking-wide leading-none uppercase">UNISTAR CHEMICALS</span>
                   <span className="text-[5px] text-gray-500 font-bold uppercase tracking-wider mt-0.5 leading-none">ISO 9001:2015 CERTIFIED</span>

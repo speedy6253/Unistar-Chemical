@@ -18,7 +18,7 @@ export default function Navbar() {
           <NavLink to="/" className="flex items-center gap-3 group">
             <div className="relative flex items-center justify-center w-11 h-11">
               <img
-                src="/assets/logo/unistar-logo.png"
+                src="/assets/logo/unistar-logo.jpeg"
                 alt="Unistar Chemicals Logo"
                 className="w-10 h-10 relative z-10 transition-transform duration-500 group-hover:rotate-12"
                 referrerPolicy="no-referrer"
