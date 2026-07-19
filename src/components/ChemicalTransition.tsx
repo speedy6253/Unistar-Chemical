@@ -65,7 +65,7 @@ export default function ChemicalTransition() {
         vx: (Math.random() - 0.5) * 1.5,
         vy: isBubble ? -Math.random() * 1.2 - 0.4 : (Math.random() - 0.5) * 0.8,
         radius: Math.random() * 4 + 2,
-        color: Math.random() < 0.6 ? "#005FA9" : "#2DD4BF",
+        color: Math.random() < 0.6 ? "#123C74" : "#2FA7B8",
         alpha: Math.random() * 0.6 + 0.4,
         type: isBubble ? "bubble" : isMolecule ? "molecule" : "dust",
       });
@@ -130,10 +130,10 @@ export default function ChemicalTransition() {
           canvas.height / 2,
           rippleRadius
         );
-        gradient.addColorStop(0, "rgba(45, 212, 191, 0)");
-        gradient.addColorStop(0.7, `rgba(45, 212, 191, ${rippleAlpha * 0.5})`);
-        gradient.addColorStop(0.9, `rgba(0, 95, 169, ${rippleAlpha * 0.3})`);
-        gradient.addColorStop(1, "rgba(0, 95, 169, 0)");
+        gradient.addColorStop(0, "rgba(47, 167, 184, 0)");
+        gradient.addColorStop(0.7, `rgba(47, 167, 184, ${rippleAlpha * 0.5})`);
+        gradient.addColorStop(0.9, `rgba(18, 60, 116, ${rippleAlpha * 0.3})`);
+        gradient.addColorStop(1, "rgba(18, 60, 116, 0)");
         
         ctx.strokeStyle = gradient;
         ctx.lineWidth = 12;
@@ -144,7 +144,7 @@ export default function ChemicalTransition() {
           const r2Progress = (rippleProgress - 0.2) / 0.8;
           ctx.beginPath();
           ctx.arc(canvas.width / 2, canvas.height / 2, maxRippleRadius * r2Progress, 0, Math.PI * 2);
-          ctx.strokeStyle = `rgba(0, 95, 169, ${Math.sin(r2Progress * Math.PI) * 0.05})`;
+          ctx.strokeStyle = `rgba(18, 60, 116, ${Math.sin(r2Progress * Math.PI) * 0.05})`;
           ctx.lineWidth = 4;
           ctx.stroke();
         }
@@ -156,7 +156,7 @@ export default function ChemicalTransition() {
         hexagons.forEach((hex) => {
           hex.rot += hex.rotSpeed;
           ctx.save();
-          ctx.strokeStyle = `rgba(0, 95, 169, ${hex.alpha * hexAlphaMult * 0.35})`;
+          ctx.strokeStyle = `rgba(18, 60, 116, ${hex.alpha * hexAlphaMult * 0.35})`;
           ctx.lineWidth = 1;
           
           drawHexagon(hex.x, hex.y, hex.size, hex.rot);
@@ -170,12 +170,12 @@ export default function ChemicalTransition() {
             
             ctx.beginPath();
             ctx.arc(vx, vy, 3, 0, Math.PI * 2);
-            ctx.fillStyle = s % 2 === 0 ? "#2DD4BF" : "#005FA9";
+            ctx.fillStyle = s % 2 === 0 ? "#2FA7B8" : "#123C74";
             ctx.fill();
             
             ctx.beginPath();
             ctx.arc(vx, vy, 5, 0, Math.PI * 2);
-            ctx.strokeStyle = `rgba(0, 95, 169, ${hex.alpha * hexAlphaMult * 0.4})`;
+            ctx.strokeStyle = `rgba(18, 60, 116, ${hex.alpha * hexAlphaMult * 0.4})`;
             ctx.lineWidth = 0.5;
             ctx.stroke();
           }
@@ -202,7 +202,7 @@ export default function ChemicalTransition() {
 
           if (dist < 110) {
             const lineAlpha = (1 - dist / 110) * 0.2 * overallAlpha;
-            ctx.strokeStyle = `rgba(0, 95, 169, ${lineAlpha})`;
+            ctx.strokeStyle = `rgba(18, 60, 116, ${lineAlpha})`;
             ctx.beginPath();
             ctx.moveTo(p1.x, p1.y);
             ctx.lineTo(p2.x, p2.y);
@@ -229,7 +229,7 @@ export default function ChemicalTransition() {
           // Hollow chemical bubble
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-          ctx.strokeStyle = `rgba(45, 212, 191, ${pAlpha * 0.9})`;
+          ctx.strokeStyle = `rgba(47, 167, 184, ${pAlpha * 0.9})`;
           ctx.lineWidth = 1.2;
           ctx.stroke();
 
@@ -242,20 +242,20 @@ export default function ChemicalTransition() {
           // Solid molecular node
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(0, 95, 169, ${pAlpha * 0.85})`;
+          ctx.fillStyle = `rgba(18, 60, 116, ${pAlpha * 0.85})`;
           ctx.fill();
 
           // Halo ring
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.radius * 1.6, 0, Math.PI * 2);
-          ctx.strokeStyle = `rgba(0, 95, 169, ${pAlpha * 0.3})`;
+          ctx.strokeStyle = `rgba(18, 60, 116, ${pAlpha * 0.3})`;
           ctx.lineWidth = 0.6;
           ctx.stroke();
         } else {
           // Fine chemical dust / laboratory precipitate
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.radius * 0.5, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(45, 212, 191, ${pAlpha * 0.75})`;
+          ctx.fillStyle = `rgba(47, 167, 184, ${pAlpha * 0.75})`;
           ctx.fill();
         }
       });

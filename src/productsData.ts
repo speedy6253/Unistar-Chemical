@@ -24,12 +24,12 @@ export const CATEGORIES = [
 export const INDUSTRIES = [
   "Water Treatment",
   "Pharmaceuticals",
-  "Food Processing",
-  "Agriculture",
+  "Food & Beverages",
   "Textile",
   "Paints & Coatings",
-  "Detergents & Cleaning",
-  "Chemical Manufacturing"
+  "Oil & Gas",
+  "Agriculture",
+  "Construction"
 ];
 
 export const BUSINESS_INFO = {

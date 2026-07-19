@@ -43,7 +43,13 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto py-12 px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
         {/* Brand Column */}
         <div className="flex flex-col gap-4">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
+            <img
+              src="/assets/logo/unistar-logo.png"
+              alt="Unistar Chemicals Logo"
+              className="w-8 h-8 object-contain"
+              referrerPolicy="no-referrer"
+            />
             <span className="font-extrabold text-xl tracking-wider text-white uppercase font-sans">
               Unistar Chemicals
             </span>

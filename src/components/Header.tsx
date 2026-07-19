@@ -1,223 +1,269 @@
 import { NavLink } from "react-router-dom";
-import { Phone, Mail, Clock, ShieldCheck, Menu, X } from "lucide-react";
+import { Phone, Menu, X } from "lucide-react";
 import { useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import { BUSINESS_INFO } from "../productsData";
+import EnquiryModal from "./EnquiryModal";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [enquiryModalOpen, setEnquiryModalOpen] = useState(false);
 
   return (
-    <header className="w-full bg-white shadow-xs sticky top-0 z-40 border-b border-gray-100">
-      {/* Sleek B2B Top-Bar */}
-      <div className="w-full bg-corporate-blue text-white py-2 px-4 text-xs md:text-sm">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-2">
-          <div className="flex flex-wrap justify-center items-center gap-4 md:gap-6">
-            <a
-              href={`tel:${BUSINESS_INFO.phone.replace(/\s+/g, "")}`}
-              className="flex items-center gap-1.5 hover:text-accent-blue transition-colors"
-            >
-              <Phone className="w-3.5 h-3.5" />
-              <span>Call: {BUSINESS_INFO.phone}</span>
-            </a>
-            <a
-              href={`mailto:${BUSINESS_INFO.email}`}
-              className="flex items-center gap-1.5 hover:text-accent-blue transition-colors"
-            >
-              <Mail className="w-3.5 h-3.5" />
-              <span>Email: {BUSINESS_INFO.email}</span>
-            </a>
-          </div>
-          <div className="flex items-center gap-4 text-gray-200">
-            <span className="flex items-center gap-1">
-              <Clock className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Hours:</span> {BUSINESS_INFO.workingHours}
-            </span>
-            <span className="hidden sm:flex items-center gap-1 text-emerald-300 font-medium">
-              <ShieldCheck className="w-4 h-4" />
-              <span>ISO Certified Supplier</span>
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Navbar */}
-      <div className="w-full px-4 py-3 bg-white">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          {/* Logo Brand Representation - matching PDF exactly */}
-          <NavLink to="/" className="flex items-center gap-3 group">
-            <div className="relative flex items-center justify-center w-12 h-12 text-corporate-blue">
-              {/* Outer circle with rotating chemistry vibe */}
-              <svg
-                viewBox="0 0 100 100"
-                className="w-full h-full absolute animate-[spin_40s_linear_infinite]"
-              >
-                <circle
-                  cx="50"
-                  cy="50"
-                  r="45"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeDasharray="4 4"
-                />
-              </svg>
-              {/* Atom/Molecule icon in center */}
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.75"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="w-7 h-7 relative z-10"
-              >
-                <circle cx="12" cy="12" r="3" fill="currentColor" fillOpacity="0.1" />
-                <path d="M4.5 16.5C5.8 15.2 8.2 14.5 12 14.5s6.2.7 7.5 2" />
-                <path d="M19.5 7.5C18.2 8.8 15.8 9.5 12 9.5s-6.2-.7-7.5-2" />
-                <path d="M12 2v3" />
-                <path d="M12 19v3" />
-                <path d="M3 12h3" />
-                <path d="M18 12h3" />
-              </svg>
-            </div>
-            <div className="flex flex-col">
-              <span className="font-extrabold text-lg md:text-xl tracking-wider text-corporate-blue uppercase leading-tight font-sans">
-                Unistar Chemicals
-              </span>
-              <span className="text-[9px] md:text-[10px] tracking-widest text-gray-500 uppercase font-semibold leading-none">
-                Create Chemistry
-              </span>
-            </div>
+    <header className="w-full bg-white shadow-[0_2px_15px_rgba(18,60,116,0.03)] sticky top-0 z-40 h-[88px] flex items-center">
+      {/* Main Navbar - Perfect spacing matching reference */}
+      <div className="w-full px-4 lg:px-8 bg-white h-full flex items-center">
+        <div className="max-w-[1320px] w-full mx-auto flex justify-between items-center h-full">
+          
+          {/* Left Side: Brand Logo ONLY. No text logo as instructed. */}
+          <NavLink to="/" className="flex items-center select-none shrink-0" aria-label="Unistar Chemicals Home">
+            <img
+              src="/assets/logo/unistar-logo.png"
+              alt="Unistar Chemicals"
+              className="h-[50px] w-auto object-contain transition-transform duration-500 hover:scale-105"
+              referrerPolicy="no-referrer"
+            />
           </NavLink>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-1.5 font-sans">
+          {/* Center Navigation - Clean placement with 40px gap, Inter font, 16px size, 500 weight, normal tracking */}
+          <nav className="hidden min-[992px]:flex items-center gap-[40px] h-full font-sans">
             <NavLink
               to="/"
               className={({ isActive }) =>
-                `px-4 py-2 rounded-md text-sm font-semibold tracking-wide transition-all ${
-                  isActive
-                    ? "bg-card-blue text-corporate-blue border-b-2 border-corporate-blue"
-                    : "text-gray-600 hover:text-corporate-blue hover:bg-gray-50"
+                `relative py-2 text-[16px] font-medium tracking-normal transition-colors duration-250 group ${
+                  isActive ? "text-[#123C74]" : "text-gray-500 hover:text-[#123C74]"
                 }`
               }
             >
-              HOME
+              {({ isActive }) => (
+                <>
+                  Home
+                  <span
+                    className={`absolute bottom-0 left-0 h-[3px] bg-[#123C74] transition-all duration-250 rounded-full ${
+                      isActive ? "w-full" : "w-0 group-hover:w-full"
+                    }`}
+                  />
+                </>
+              )}
             </NavLink>
             <NavLink
               to="/products"
               className={({ isActive }) =>
-                `px-4 py-2 rounded-md text-sm font-semibold tracking-wide transition-all ${
-                  isActive
-                    ? "bg-card-blue text-corporate-blue border-b-2 border-corporate-blue"
-                    : "text-gray-600 hover:text-corporate-blue hover:bg-gray-50"
+                `relative py-2 text-[16px] font-medium tracking-normal transition-colors duration-250 group ${
+                  isActive ? "text-[#123C74]" : "text-gray-500 hover:text-[#123C74]"
                 }`
               }
             >
-              PRODUCTS
+              {({ isActive }) => (
+                <>
+                  Products
+                  <span
+                    className={`absolute bottom-0 left-0 h-[3px] bg-[#123C74] transition-all duration-250 rounded-full ${
+                      isActive ? "w-full" : "w-0 group-hover:w-full"
+                    }`}
+                  />
+                </>
+              )}
             </NavLink>
             <NavLink
               to="/about"
               className={({ isActive }) =>
-                `px-4 py-2 rounded-md text-sm font-semibold tracking-wide transition-all ${
-                  isActive
-                    ? "bg-card-blue text-corporate-blue border-b-2 border-corporate-blue"
-                    : "text-gray-600 hover:text-corporate-blue hover:bg-gray-50"
+                `relative py-2 text-[16px] font-medium tracking-normal transition-colors duration-250 group ${
+                  isActive ? "text-[#123C74]" : "text-gray-500 hover:text-[#123C74]"
                 }`
               }
             >
-              ABOUT
+              {({ isActive }) => (
+                <>
+                  About
+                  <span
+                    className={`absolute bottom-0 left-0 h-[3px] bg-[#123C74] transition-all duration-250 rounded-full ${
+                      isActive ? "w-full" : "w-0 group-hover:w-full"
+                    }`}
+                  />
+                </>
+              )}
             </NavLink>
             <NavLink
               to="/contact"
               className={({ isActive }) =>
-                `px-4 py-2 rounded-md text-sm font-semibold tracking-wide transition-all ${
-                  isActive
-                    ? "bg-card-blue text-corporate-blue border-b-2 border-corporate-blue"
-                    : "text-gray-600 hover:text-corporate-blue hover:bg-gray-50"
+                `relative py-2 text-[16px] font-medium tracking-normal transition-colors duration-250 group ${
+                  isActive ? "text-[#123C74]" : "text-gray-500 hover:text-[#123C74]"
                 }`
               }
             >
-              CONTACT
-            </NavLink>
-
-            <NavLink
-              to="/products"
-              className="ml-4 px-5 py-2.5 bg-corporate-blue hover:bg-corporate-blue-hover text-white rounded font-bold text-xs tracking-wider transition-colors shadow-sm"
-            >
-              VIEW PORTFOLIO
+              {({ isActive }) => (
+                <>
+                  Contact
+                  <span
+                    className={`absolute bottom-0 left-0 h-[3px] bg-[#123C74] transition-all duration-250 rounded-full ${
+                      isActive ? "w-full" : "w-0 group-hover:w-full"
+                    }`}
+                  />
+                </>
+              )}
             </NavLink>
           </nav>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 text-gray-600 hover:text-corporate-blue hover:bg-gray-50 rounded"
-            aria-label="Toggle Menu"
-            id="mobile-menu-toggle"
-          >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+          {/* Right Side - Phone Number & Primary CTA Button - Matching reference precisely */}
+          <div className="hidden min-[992px]:flex items-center gap-8 h-full">
+            <a
+              href={`tel:${BUSINESS_INFO.phone.replace(/\s+/g, "")}`}
+              className="flex items-center gap-2.5 hover:opacity-85 transition-opacity duration-200"
+            >
+              <Phone className="w-5 h-5 text-[#123C74]" />
+              <span className="font-bold text-[15px] text-[#123C74] font-sans tracking-wide">
+                {BUSINESS_INFO.phone}
+              </span>
+            </a>
+            
+            <button
+              onClick={() => setEnquiryModalOpen(true)}
+              className="h-12 px-8 bg-[#123C74] hover:bg-[#1D5A92] text-white rounded-[12px] font-bold text-xs tracking-wider transition-all duration-250 shadow-sm hover:-translate-y-[2px] flex items-center justify-center gap-2 uppercase"
+              id="header-enquire-btn"
+            >
+              <span>Request a Quote</span>
+            </button>
+          </div>
+
+          {/* Mobile Menu Trigger & Responsive CTA Button */}
+          <div className="flex min-[992px]:hidden items-center gap-4">
+            <button
+              onClick={() => setEnquiryModalOpen(true)}
+              className="h-10 px-5 bg-[#123C74] hover:bg-[#1D5A92] text-white rounded-[10px] font-bold text-[11px] tracking-wider transition-all duration-250 shadow-sm hover:-translate-y-[2px] flex items-center justify-center uppercase max-[440px]:hidden"
+            >
+              Enquire
+            </button>
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-2.5 text-[#123C74] hover:bg-gray-50 rounded-xl transition-colors"
+              aria-label="Toggle Menu"
+              id="mobile-menu-toggle"
+            >
+              <Menu className="w-6 h-6" />
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Mobile Drawer Navigation */}
-      {mobileMenuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100 py-3 px-4 flex flex-col gap-2 shadow-inner">
-          <NavLink
-            to="/"
-            onClick={() => setMobileMenuOpen(false)}
-            className={({ isActive }) =>
-              `px-3 py-2.5 rounded font-bold text-sm tracking-wide ${
-                isActive ? "bg-card-blue text-corporate-blue" : "text-gray-600 hover:bg-gray-50"
-              }`
-            }
-          >
-            HOME
-          </NavLink>
-          <NavLink
-            to="/products"
-            onClick={() => setMobileMenuOpen(false)}
-            className={({ isActive }) =>
-              `px-3 py-2.5 rounded font-bold text-sm tracking-wide ${
-                isActive ? "bg-card-blue text-corporate-blue" : "text-gray-600 hover:bg-gray-50"
-              }`
-            }
-          >
-            PRODUCTS
-          </NavLink>
-          <NavLink
-            to="/about"
-            onClick={() => setMobileMenuOpen(false)}
-            className={({ isActive }) =>
-              `px-3 py-2.5 rounded font-bold text-sm tracking-wide ${
-                isActive ? "bg-card-blue text-corporate-blue" : "text-gray-600 hover:bg-gray-50"
-              }`
-            }
-          >
-            ABOUT
-          </NavLink>
-          <NavLink
-            to="/contact"
-            onClick={() => setMobileMenuOpen(false)}
-            className={({ isActive }) =>
-              `px-3 py-2.5 rounded font-bold text-sm tracking-wide ${
-                isActive ? "bg-card-blue text-corporate-blue" : "text-gray-600 hover:bg-gray-50"
-              }`
-            }
-          >
-            CONTACT
-          </NavLink>
+      {/* Mobile Drawer Navigation with Premium Slide Animation */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <>
+            {/* Soft Backdrop overlay */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.4 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMobileMenuOpen(false)}
+              className="fixed inset-0 bg-black/60 z-40 min-[992px]:hidden"
+            />
 
-          <NavLink
-            to="/products"
-            onClick={() => setMobileMenuOpen(false)}
-            className="mt-2 w-full text-center px-4 py-3 bg-corporate-blue hover:bg-corporate-blue-hover text-white rounded font-bold text-sm tracking-wide transition-colors"
-          >
-            Request Quotation
-          </NavLink>
-        </div>
-      )}
+            {/* Slide Panel from Right */}
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "tween", duration: 0.3, ease: [0.25, 1, 0.5, 1] }}
+              className="fixed inset-y-0 right-0 w-full sm:w-[400px] bg-white shadow-2xl z-50 flex flex-col p-6 min-[992px]:hidden"
+            >
+              {/* Header with Logo and Close Icon */}
+              <div className="flex items-center justify-between pb-6 border-b border-gray-100">
+                <img
+                  src="/assets/logo/unistar-logo.png"
+                  alt="Unistar Chemicals"
+                  className="h-[44px] w-auto object-contain"
+                />
+                <button
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-2 text-gray-500 hover:text-[#123C74] rounded-lg hover:bg-gray-50 transition-colors"
+                  aria-label="Close Menu"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              {/* Navigation Items - Large Spacing & Typography consistent with desktop */}
+              <nav className="flex flex-col gap-6 py-10 flex-grow font-sans">
+                <NavLink
+                  to="/"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={({ isActive }) =>
+                    `text-lg font-medium tracking-normal py-2 border-b border-gray-50 transition-colors ${
+                      isActive ? "text-[#123C74] font-bold" : "text-gray-600 hover:text-[#123C74]"
+                    }`
+                  }
+                >
+                  Home
+                </NavLink>
+                <NavLink
+                  to="/products"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={({ isActive }) =>
+                    `text-lg font-medium tracking-normal py-2 border-b border-gray-50 transition-colors ${
+                      isActive ? "text-[#123C74] font-bold" : "text-gray-600 hover:text-[#123C74]"
+                    }`
+                  }
+                >
+                  Products
+                </NavLink>
+                <NavLink
+                  to="/about"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={({ isActive }) =>
+                    `text-lg font-medium tracking-normal py-2 border-b border-gray-50 transition-colors ${
+                      isActive ? "text-[#123C74] font-bold" : "text-gray-600 hover:text-[#123C74]"
+                    }`
+                  }
+                >
+                  About
+                </NavLink>
+                <NavLink
+                  to="/contact"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={({ isActive }) =>
+                    `text-lg font-medium tracking-normal py-2 border-b border-gray-50 transition-colors ${
+                      isActive ? "text-[#123C74] font-bold" : "text-gray-600 hover:text-[#123C74]"
+                    }`
+                  }
+                >
+                  Contact
+                </NavLink>
+              </nav>
+
+              {/* Footer Information in Drawer */}
+              <div className="pt-6 border-t border-gray-100 flex flex-col gap-6">
+                <a
+                  href={`tel:${BUSINESS_INFO.phone.replace(/\s+/g, "")}`}
+                  className="flex items-center gap-3 justify-center py-2 text-[#123C74] hover:opacity-85 transition-opacity"
+                >
+                  <Phone className="w-5 h-5 text-[#123C74]" />
+                  <span className="font-bold text-base font-sans">
+                    {BUSINESS_INFO.phone}
+                  </span>
+                </a>
+
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    setEnquiryModalOpen(true);
+                  }}
+                  className="w-full h-12 bg-[#123C74] hover:bg-[#1D5A92] text-white rounded-[12px] font-bold text-sm tracking-wide transition-all shadow-md flex items-center justify-center gap-2 uppercase"
+                >
+                  Request a Quote
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Embedded Enquiry Modal */}
+      <EnquiryModal
+        isOpen={enquiryModalOpen}
+        onClose={() => setEnquiryModalOpen(false)}
+        productName="General Industrial Chemical Bulk Supply"
+      />
     </header>
   );
 }

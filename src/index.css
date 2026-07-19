@@ -5,14 +5,16 @@
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
   
-  --color-corporate-blue: #005FA9;
-  --color-corporate-blue-hover: #004B85;
-  --color-soft-aqua: #2DD4BF;
-  --color-soft-aqua-bg: #E6F9F6;
-  --color-card-blue: #F0F7FF;
+  --color-corporate-blue: #123C74;
+  --color-corporate-blue-hover: #1E5A93;
+  --color-soft-aqua: #2FA7B8;
+  --color-soft-aqua-bg: #EAF8FB;
+  --color-card-blue: #F7FBFD;
   --color-very-light-grey: #F3F4F6;
   --color-dark-grey: #374151;
-  --color-accent-blue: #93C5FD;
+  --color-accent-blue: #7FD3DD;
+  --color-soft-white: #FFFFFF;
+  --color-light-background: #F7FBFD;
 }
 
 @layer base {
