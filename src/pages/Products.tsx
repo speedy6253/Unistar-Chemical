@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, SlidersHorizontal, AlertCircle, FileText, ChevronRight, Download } from "lucide-react";
 import { PRODUCTS, CATEGORIES, Product } from "../productsData";
-import { getCategoryColor, getCategoryIcon } from "./Home";
+import { getCategoryColor, getCategoryIcon } from "../utils/categoryHelpers";
 import EnquiryModal from "../components/EnquiryModal";
 import CatalogueDownloadModal from "../components/CatalogueDownloadModal";
 
@@ -159,9 +159,10 @@ export default function Products() {
               >
                 {/* Visual chemistry image header */}
                 <div className="h-32 bg-gray-950 relative overflow-hidden flex items-center justify-center shrink-0">
-                  <div className="absolute inset-0 opacity-20 group-hover:scale-105 transition-all duration-500">
+                  <div className="absolute inset-0 opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500">
                     <img
                       src={
+                        prod.image || (
                         prod.category === "Acids"
                           ? "https://images.unsplash.com/photo-1532187863486-abf9d39d66e8?q=80&w=500&auto=format&fit=crop"
                           : prod.category === "Water Treatment Chemicals"
@@ -171,6 +172,7 @@ export default function Products() {
                           : prod.category === "Salts & Minerals"
                           ? "https://images.unsplash.com/photo-1610348725531-843dff563e2c?q=80&w=500&auto=format&fit=crop"
                           : "https://images.unsplash.com/photo-1507668077129-56e32842fceb?q=80&w=500&auto=format&fit=crop"
+                        )
                       }
                       alt={prod.name}
                       className="w-full h-full object-cover"

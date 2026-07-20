@@ -45,7 +45,7 @@ export default function Footer() {
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-3">
             <img
-              src="/assets/logo/unistar-logo.jpeg"
+              src="https://i.ibb.co/BH2rsRW2/Unistar-logo.png"
               alt="Unistar Chemicals Logo"
               className="w-8 h-8 object-contain"
               referrerPolicy="no-referrer"

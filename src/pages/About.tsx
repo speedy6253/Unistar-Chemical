@@ -1,6 +1,6 @@
 import { 
   Building2, Eye, Award, ShieldCheck, HeartHandshake, MapPin, 
-  Mail, Phone, Clock, Calendar, CheckSquare, Compass
+  Mail, Phone, Clock, Calendar, CheckSquare, Compass, Check
 } from "lucide-react";
 import { BUSINESS_INFO } from "../productsData";
 
@@ -107,7 +107,65 @@ export default function About() {
           </div>
         </div>
 
-        {/* 3. Facility Image Galleries: Warehouses, Storage & Office */}
+        {/* 3. Quality Assurance Section */}
+        <section className="py-12 px-6 bg-white rounded-lg border border-gray-200 shadow-xs">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <div className="lg:col-span-5 relative">
+              {/* Visual chemistry image */}
+              <div className="rounded-2xl overflow-hidden shadow-xl border border-gray-200 bg-white p-2">
+                <img
+                  src="https://images.unsplash.com/photo-1608155686393-8fdd966d784d?q=80&w=600&auto=format&fit=crop"
+                  alt="Unistar Chemical QC Quality Assurance Lab Equipment"
+                  className="w-full h-80 object-cover rounded-xl"
+                  referrerPolicy="no-referrer"
+                />
+              </div>
+              {/* Decorative stamp overlay */}
+              <div className="absolute -bottom-6 -right-6 bg-white border-2 border-corporate-blue p-4 rounded-xl shadow-lg flex items-center gap-2 max-w-[210px] z-10">
+                <ShieldCheck className="w-8 h-8 text-emerald-600 shrink-0" />
+                <div className="text-xs leading-tight">
+                  <span className="font-black uppercase tracking-wider text-corporate-blue block">QC PASSED</span>
+                  <span className="text-gray-500 font-extrabold text-[9px]">BATCH VERIFIED SOURCING</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="lg:col-span-7 flex flex-col gap-5 lg:pl-6 mt-6 lg:mt-0">
+              <span className="text-xs font-black text-corporate-blue uppercase tracking-widest pl-2 border-l-4 border-soft-aqua">
+                Strict Quality Parameters
+              </span>
+              <h2 className="text-2xl md:text-3xl font-black text-gray-900 tracking-tight uppercase">
+                Rigorous Quality Checks, Compliant Standards
+              </h2>
+              <p className="text-xs md:text-sm text-gray-600 leading-relaxed">
+                At Unistar Chemicals, every product is sourced from trusted and established manufacturers and undergoes careful quality checks before dispatch. Materials are verified for consistency, purity, and compliance with recognized industry standards, ensuring that each consignment meets the specifications our customers expect.
+              </p>
+              <p className="text-xs md:text-sm text-gray-600 leading-relaxed">
+                This disciplined approach to quality helps us build lasting trust, minimize batch variability, and deliver dependable performance across every order we supply. Detailed certificates of analysis (COA), safety data sheets (MSDS), and specifications sheets are available immediately upon customer request.
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                <div className="flex items-center gap-2 text-xs font-bold text-gray-800">
+                  <Check className="w-4 h-4 text-emerald-500 shrink-0" />
+                  <span>Certificate of Analysis (COA) with each batch</span>
+                </div>
+                <div className="flex items-center gap-2 text-xs font-bold text-gray-800">
+                  <Check className="w-4 h-4 text-emerald-500 shrink-0" />
+                  <span>Secure robust industrial packaging</span>
+                </div>
+                <div className="flex items-center gap-2 text-xs font-bold text-gray-800">
+                  <Check className="w-4 h-4 text-emerald-500 shrink-0" />
+                  <span>MSDS and hazard documentation available</span>
+                </div>
+                <div className="flex items-center gap-2 text-xs font-bold text-gray-800">
+                  <Check className="w-4 h-4 text-emerald-500 shrink-0" />
+                  <span>Pan-India logistics tracking support</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 4. Facility Image Galleries: Warehouses, Storage & Office */}
         <div className="flex flex-col gap-6">
           <div className="border-b border-gray-200 pb-3">
             <h2 className="text-xl font-extrabold text-gray-900">

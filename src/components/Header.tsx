@@ -18,7 +18,7 @@ export default function Header() {
           {/* Left Side: Brand Logo ONLY. No text logo as instructed. */}
           <NavLink to="/" className="flex items-center select-none shrink-0" aria-label="Unistar Chemicals Home">
             <img
-              src="/assets/logo/unistar-logo.jpeg"
+              src="https://i.ibb.co/BH2rsRW2/Unistar-logo.png"
               alt="Unistar Chemicals"
               className="h-[50px] w-auto object-contain transition-transform duration-500 hover:scale-105"
               referrerPolicy="no-referrer"
@@ -170,7 +170,7 @@ export default function Header() {
               {/* Header with Logo and Close Icon */}
               <div className="flex items-center justify-between pb-6 border-b border-gray-100">
                 <img
-                  src="/assets/logo/unistar-logo.jpeg"
+                  src="https://i.ibb.co/BH2rsRW2/Unistar-logo.png"
                   alt="Unistar Chemicals"
                   className="h-[44px] w-auto object-contain"
                 />
