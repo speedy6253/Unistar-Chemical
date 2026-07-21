@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useRef } from "react";
 import {
   User,
   signInWithEmailAndPassword,
@@ -27,9 +27,18 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
   const [firebaseUser, setFirebaseUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const isSigningIn = useRef(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      // If we are actively in the login flow, skip profile resolution and let login() handle it
+      if (isSigningIn.current) {
+        if (user) {
+          setFirebaseUser(user);
+        }
+        return;
+      }
+
       setLoading(true);
       setError(null);
       if (user) {
@@ -66,7 +75,7 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
             setAdminUser(null);
             setFirebaseUser(null);
           }
-        } catch (err: any) {
+        } catch (err) {
           console.error("Auth initialization error:", err);
           setError("Failed to verify administrator profile.");
           setAdminUser(null);
@@ -83,6 +92,7 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = async (email: string, password: string): Promise<AdminUser> => {
+    isSigningIn.current = true;
     setLoading(true);
     setError(null);
     try {
@@ -139,6 +149,8 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
       setError(errMsg);
       setLoading(false);
       throw new Error(errMsg);
+    } finally {
+      isSigningIn.current = false;
     }
   };
 
