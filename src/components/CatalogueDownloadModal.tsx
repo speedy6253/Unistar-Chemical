@@ -2,6 +2,7 @@ import { X, Send, Download, CheckCircle, ShieldCheck } from "lucide-react";
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { BUSINESS_INFO, PRODUCTS } from "../productsData";
 import { leadService } from "../services/leadService";
+import { APP_CONFIG } from "../config/appConfig";
 
 interface CatalogueDownloadModalProps {
   isOpen: boolean;
@@ -38,14 +39,25 @@ export default function CatalogueDownloadModal({ isOpen, onClose }: CatalogueDow
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const triggerPdfDownload = () => {
-    // Direct download of the uploaded official corporate product catalogue
-    const link = document.createElement("a");
-    link.href = "/catalogues/Unistar_Chemicals_Product_Catalogue.pdf";
-    link.download = "Unistar_Chemicals_Product_Catalogue.pdf";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const triggerPdfDownload = async () => {
+    try {
+      const response = await fetch(APP_CONFIG.cataloguePdfUrl);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch PDF (status: ${response.status})`);
+      }
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "Unistar_Chemicals_Product_Catalogue.pdf";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err: any) {
+      console.error("Direct PDF download failed:", err);
+      throw new Error("Unable to download the Product Catalogue PDF from our secure servers. Please check your internet connection and try again.");
+    }
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -105,13 +117,13 @@ Please share your quotation and product details.`;
       const encodedMessage = encodeURIComponent(messageText);
       const whatsappUrl = `https://wa.me/${BUSINESS_INFO.whatsappUrlNumber}?text=${encodedMessage}`;
 
-      setSubmitted(true);
-
       // 1. Open WhatsApp with pre-filled message (Desktop or Mobile redirect)
       window.open(whatsappUrl, "_blank", "noopener,noreferrer");
 
       // 2. Trigger the PDF download simultaneously
-      triggerPdfDownload();
+      await triggerPdfDownload();
+
+      setSubmitted(true);
 
       // Reset form & close modal after a brief duration
       setTimeout(() => {
@@ -128,7 +140,7 @@ Please share your quotation and product details.`;
         onClose();
       }, 1500);
     } catch (err: any) {
-      console.error("Firestore catalogue download submission failed:", err);
+      console.error("Catalogue download process failed:", err);
       setError(err.message || "Failed to initiate download process. Please check your network and try again.");
     } finally {
       setIsSaving(false);
