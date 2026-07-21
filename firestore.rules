@@ -1,0 +1,117 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global Safety Net: Deny everything by default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper: Validate document ID format
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Helper: Access incoming document data
+    function incoming() {
+      return request.resource.data;
+    }
+
+    // Helper: Verify string is non-empty and fits within max length limit
+    function isNonEmptyString(val, maxLen) {
+      return val is string && val.trim().size() > 0 && val.size() <= maxLen;
+    }
+
+    // Helper: Verify string value is within size boundaries (can be empty string)
+    function isStringWithinBounds(val, minLen, maxLen) {
+      return val is string && val.size() >= minLen && val.size() <= maxLen;
+    }
+
+    // Helper: Validate standard B2B email structure pattern
+    function isValidEmail(email) {
+      return email is string && email.matches('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$');
+    }
+
+    // Helper: Validate standard generated Lead ID pattern (e.g. UC-YYYYMMDD-XXXXXX)
+    function isValidLeadId(leadId) {
+      return leadId is string && leadId.matches('^UC-\\d{8}-\\d{6}$');
+    }
+
+    // Helper: Validate all common lead information and dynamic metadata
+    function validateCommonFields() {
+      return isValidLeadId(incoming().leadId) &&
+             isNonEmptyString(incoming().name, 150) &&
+             isNonEmptyString(incoming().company, 150) &&
+             isNonEmptyString(incoming().phone, 25) && incoming().phone.size() >= 5 &&
+             isStringWithinBounds(incoming().whatsapp, 0, 25) &&
+             isValidEmail(incoming().email) &&
+             isStringWithinBounds(incoming().city, 0, 100) &&
+             isStringWithinBounds(incoming().state, 0, 100) &&
+             incoming().source == 'Website' &&
+             incoming().status == 'New' &&
+             incoming().createdAt == request.time &&
+             incoming().updatedAt == request.time &&
+             isStringWithinBounds(incoming().deviceType, 0, 100) &&
+             isStringWithinBounds(incoming().browser, 0, 100) &&
+             isStringWithinBounds(incoming().operatingSystem, 0, 100) &&
+             isStringWithinBounds(incoming().landingPage, 0, 500) &&
+             isStringWithinBounds(incoming().referrer, 0, 500) &&
+             isStringWithinBounds(incoming().utm_source, 0, 100) &&
+             isStringWithinBounds(incoming().utm_medium, 0, 100) &&
+             isStringWithinBounds(incoming().utm_campaign, 0, 100);
+    }
+
+    // Helpers to enforce strictly allowed keys (no unexpected fields)
+    function hasOnlyKeys(allowedKeys) {
+      return incoming().keys().hasOnly(allowedKeys);
+    }
+
+    function hasAllKeys(requiredKeys) {
+      return incoming().keys().hasAll(requiredKeys);
+    }
+
+    // Counters collection for transaction-based sequence ID generation
+    match /counters/{counterId} {
+      allow read, write: if isValidId(counterId) && 
+                         request.resource.data.keys().hasOnly(['count']) && 
+                         request.resource.data.count is int && 
+                         request.resource.data.count >= 0;
+    }
+
+    // Product Enquiries Collection
+    match /product_enquiries/{id} {
+      allow create: if isValidId(id) &&
+                    request.size < 10240 && // Prevent oversized payloads (10KB limit)
+                    hasAllKeys(['leadId', 'name', 'company', 'phone', 'whatsapp', 'email', 'productName', 'quantity', 'source', 'status', 'createdAt', 'updatedAt']) &&
+                    hasOnlyKeys(['leadId', 'name', 'company', 'phone', 'whatsapp', 'email', 'city', 'state', 'message', 'productName', 'quantity', 'source', 'status', 'createdAt', 'updatedAt', 'deviceType', 'browser', 'operatingSystem', 'landingPage', 'referrer', 'utm_source', 'utm_medium', 'utm_campaign']) &&
+                    validateCommonFields() &&
+                    isStringWithinBounds(incoming().message, 0, 3000) &&
+                    isNonEmptyString(incoming().productName, 200) &&
+                    isNonEmptyString(incoming().quantity, 100);
+      allow read, update, delete: if false;
+    }
+
+    // Catalogue Downloads Collection
+    match /catalogue_downloads/{id} {
+      allow create: if isValidId(id) &&
+                    request.size < 10240 && // Prevent oversized payloads (10KB limit)
+                    hasAllKeys(['leadId', 'name', 'company', 'phone', 'whatsapp', 'email', 'downloadedCatalogue', 'source', 'status', 'createdAt', 'updatedAt']) &&
+                    hasOnlyKeys(['leadId', 'name', 'company', 'phone', 'whatsapp', 'email', 'city', 'state', 'message', 'downloadedCatalogue', 'source', 'status', 'createdAt', 'updatedAt', 'deviceType', 'browser', 'operatingSystem', 'landingPage', 'referrer', 'utm_source', 'utm_medium', 'utm_campaign']) &&
+                    validateCommonFields() &&
+                    isStringWithinBounds(incoming().message, 0, 3000) &&
+                    isNonEmptyString(incoming().downloadedCatalogue, 200);
+      allow read, update, delete: if false;
+    }
+
+    // Contact Enquiries Collection
+    match /contact_enquiries/{id} {
+      allow create: if isValidId(id) &&
+                    request.size < 10240 && // Prevent oversized payloads (10KB limit)
+                    hasAllKeys(['leadId', 'name', 'company', 'phone', 'whatsapp', 'email', 'subject', 'message', 'source', 'status', 'createdAt', 'updatedAt']) &&
+                    hasOnlyKeys(['leadId', 'name', 'company', 'phone', 'whatsapp', 'email', 'city', 'state', 'message', 'subject', 'source', 'status', 'createdAt', 'updatedAt', 'deviceType', 'browser', 'operatingSystem', 'landingPage', 'referrer', 'utm_source', 'utm_medium', 'utm_campaign']) &&
+                    validateCommonFields() &&
+                    isNonEmptyString(incoming().message, 3000) &&
+                    isNonEmptyString(incoming().subject, 200);
+      allow read, update, delete: if false;
+    }
+  }
+}

@@ -4,6 +4,7 @@ import {
   Clock, ShieldCheck, AlertCircle, CheckCircle2 
 } from "lucide-react";
 import { BUSINESS_INFO, FAQS } from "../productsData";
+import { leadService } from "../services/leadService";
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -16,6 +17,8 @@ export default function Contact() {
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -23,11 +26,27 @@ export default function Contact() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setIsSaving(true);
+    setError(null);
 
-    // Compile general B2B enquiry message
-    const messageText = `Hello Unistar Chemicals,
+    try {
+      // Save to Firestore first
+      await leadService.submitContactEnquiry({
+        name: formData.name,
+        company: formData.company,
+        phone: formData.phone,
+        whatsapp: formData.whatsapp,
+        email: formData.email,
+        city: "Not Provided",
+        state: "Not Provided",
+        message: formData.message,
+        subject: "General B2B Enquiry"
+      });
+
+      // Compile general B2B enquiry message
+      const messageText = `Hello Unistar Chemicals,
 
 I visited your website and would like to contact you regarding a B2B query:
 
@@ -51,24 +70,30 @@ ${formData.message}
 
 Please get in touch with me with details.`;
 
-    const encodedMessage = encodeURIComponent(messageText);
-    const whatsappUrl = `https://wa.me/${BUSINESS_INFO.whatsappUrlNumber}?text=${encodedMessage}`;
+      const encodedMessage = encodeURIComponent(messageText);
+      const whatsappUrl = `https://wa.me/${BUSINESS_INFO.whatsappUrlNumber}?text=${encodedMessage}`;
 
-    setSubmitted(true);
+      setSubmitted(true);
 
-    setTimeout(() => {
-      window.open(whatsappUrl, "_blank", "noopener,noreferrer");
-      setSubmitted(false);
-      // Reset form
-      setFormData({
-        name: "",
-        company: "",
-        phone: "",
-        whatsapp: "",
-        email: "",
-        message: ""
-      });
-    }, 1200);
+      setTimeout(() => {
+        window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+        setSubmitted(false);
+        // Reset form
+        setFormData({
+          name: "",
+          company: "",
+          phone: "",
+          whatsapp: "",
+          email: "",
+          message: ""
+        });
+      }, 1200);
+    } catch (err: any) {
+      console.error("Firestore contact submission failed:", err);
+      setError(err.message || "Failed to submit request. Please check your network and try again.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const toggleFaq = (index: number) => {
@@ -188,6 +213,11 @@ Please get in touch with me with details.`;
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="flex flex-col gap-4 text-xs md:text-sm">
+                {error && (
+                  <div className="bg-red-50 text-red-800 p-3 rounded border border-red-100 text-xs font-medium">
+                    {error}
+                  </div>
+                )}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Name */}
                   <div>
@@ -297,11 +327,21 @@ Please get in touch with me with details.`;
                 {/* Submit button */}
                 <button
                   type="submit"
-                  className="w-full py-3 bg-corporate-blue hover:bg-corporate-blue-hover text-white rounded font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-xs"
+                  disabled={isSaving}
+                  className="w-full py-3 bg-corporate-blue hover:bg-corporate-blue-hover text-white rounded font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-xs disabled:opacity-50 disabled:cursor-not-allowed"
                   id="submit-contact-form-btn"
                 >
-                  <Send className="w-4 h-4" />
-                  <span>Submit Inquiry Via WhatsApp</span>
+                  {isSaving ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      <span>Saving Enquiry...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4" />
+                      <span>Submit Inquiry Via WhatsApp</span>
+                    </>
+                  )}
                 </button>
               </form>
             )}

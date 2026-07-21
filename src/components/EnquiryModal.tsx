@@ -1,6 +1,7 @@
 import { X, Send, CheckCircle, Smartphone } from "lucide-react";
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { BUSINESS_INFO } from "../productsData";
+import { leadService } from "../services/leadService";
 
 interface EnquiryModalProps {
   isOpen: boolean;
@@ -21,11 +22,14 @@ export default function EnquiryModal({ isOpen, onClose, productName }: EnquiryMo
   });
   
   const [submitted, setSubmitted] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen) {
       setSubmitted(false);
-      // Don't clear WhatsApp / phone if the user previously filled them
+      setIsSaving(false);
+      setError(null);
     }
   }, [isOpen]);
 
@@ -36,11 +40,33 @@ export default function EnquiryModal({ isOpen, onClose, productName }: EnquiryMo
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setIsSaving(true);
+    setError(null);
 
-    // Compile message exactly as requested in the reference document
-    const messageText = `Hello Unistar Chemicals,
+    try {
+      // Split city and state
+      const [cityPart, ...stateParts] = formData.city.split(",");
+      const city = cityPart ? cityPart.trim() : "";
+      const state = stateParts.length > 0 ? stateParts.join(",").trim() : "";
+
+      // Save to Firestore
+      await leadService.submitProductEnquiry({
+        name: formData.name,
+        company: formData.company,
+        phone: formData.phone,
+        whatsapp: formData.whatsapp,
+        email: formData.email,
+        city,
+        state,
+        message: formData.message,
+        productName,
+        quantity: formData.quantity,
+      });
+
+      // Compile message exactly as requested in the reference document
+      const messageText = `Hello Unistar Chemicals,
 
 I would like to enquire about:
 
@@ -68,21 +94,28 @@ ${formData.city}
 Quantity:
 ${formData.quantity}
 
+
 Requirement:
 ${formData.message}
 
 Please share quotation.`;
 
-    const encodedMessage = encodeURIComponent(messageText);
-    const whatsappUrl = `https://wa.me/${BUSINESS_INFO.whatsappUrlNumber}?text=${encodedMessage}`;
+      const encodedMessage = encodeURIComponent(messageText);
+      const whatsappUrl = `https://wa.me/${BUSINESS_INFO.whatsappUrlNumber}?text=${encodedMessage}`;
 
-    setSubmitted(true);
-    
-    // Auto redirect after a brief moment
-    setTimeout(() => {
-      window.open(whatsappUrl, "_blank", "noopener,noreferrer");
-      onClose();
-    }, 1000);
+      setSubmitted(true);
+      
+      // Auto redirect after a brief moment
+      setTimeout(() => {
+        window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+        onClose();
+      }, 1000);
+    } catch (err: any) {
+      console.error("Firestore submission failed:", err);
+      setError(err.message || "Something went wrong while submitting your enquiry. Please check your network and try again.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -122,6 +155,11 @@ Please share quotation.`;
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="flex flex-col gap-4 text-sm">
+              {error && (
+                <div className="bg-red-50 text-red-800 p-3 rounded border border-red-100 text-xs font-medium">
+                  {error}
+                </div>
+              )}
               
               {/* Product Pre-filled Field */}
               <div>
@@ -279,17 +317,28 @@ Please share quotation.`;
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-2 text-gray-500 hover:bg-gray-100 rounded transition-colors text-xs font-bold uppercase tracking-wider"
+                  disabled={isSaving}
+                  className="px-4 py-2 text-gray-500 hover:bg-gray-100 rounded transition-colors text-xs font-bold uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="inline-flex items-center gap-1.5 px-6 py-2 bg-corporate-blue hover:bg-corporate-blue-hover text-white rounded text-xs font-bold uppercase tracking-wider transition-colors shadow-sm"
+                  disabled={isSaving}
+                  className="inline-flex items-center gap-1.5 px-6 py-2 bg-corporate-blue hover:bg-corporate-blue-hover text-white rounded text-xs font-bold uppercase tracking-wider transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                   id="submit-enquiry-btn"
                 >
-                  <Send className="w-3.5 h-3.5" />
-                  Submit Request
+                  {isSaving ? (
+                    <>
+                      <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-3.5 h-3.5" />
+                      Submit Request
+                    </>
+                  )}
                 </button>
               </div>
             </form>

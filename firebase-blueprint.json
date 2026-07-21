@@ -1,0 +1,86 @@
+{
+  "entities": {
+    "product_enquiry": {
+      "title": "Product Enquiry",
+      "description": "B2B product pricing and sourcing enquiries from potential clients.",
+      "type": "object",
+      "properties": {
+        "leadId": { "type": "string", "maxLength": 32 },
+        "name": { "type": "string", "maxLength": 100 },
+        "company": { "type": "string", "maxLength": 100 },
+        "phone": { "type": "string", "maxLength": 20 },
+        "whatsapp": { "type": "string", "maxLength": 20 },
+        "email": { "type": "string", "maxLength": 100 },
+        "city": { "type": "string", "maxLength": 50 },
+        "state": { "type": "string", "maxLength": 50 },
+        "message": { "type": "string", "maxLength": 2000 },
+        "productName": { "type": "string", "maxLength": 150 },
+        "quantity": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["leadId", "name", "company", "phone", "email", "productName", "quantity"]
+    },
+    "catalogue_download": {
+      "title": "Catalogue Download",
+      "description": "Leads generated when downloading product catalogues.",
+      "type": "object",
+      "properties": {
+        "leadId": { "type": "string", "maxLength": 32 },
+        "name": { "type": "string", "maxLength": 100 },
+        "company": { "type": "string", "maxLength": 100 },
+        "phone": { "type": "string", "maxLength": 20 },
+        "whatsapp": { "type": "string", "maxLength": 20 },
+        "email": { "type": "string", "maxLength": 100 },
+        "city": { "type": "string", "maxLength": 50 },
+        "state": { "type": "string", "maxLength": 50 },
+        "message": { "type": "string", "maxLength": 2000 },
+        "downloadedCatalogue": { "type": "string", "maxLength": 150 }
+      },
+      "required": ["leadId", "name", "company", "phone", "email", "downloadedCatalogue"]
+    },
+    "contact_enquiry": {
+      "title": "Contact Enquiry",
+      "description": "General B2B enquiries from the contact form.",
+      "type": "object",
+      "properties": {
+        "leadId": { "type": "string", "maxLength": 32 },
+        "name": { "type": "string", "maxLength": 100 },
+        "company": { "type": "string", "maxLength": 100 },
+        "phone": { "type": "string", "maxLength": 20 },
+        "whatsapp": { "type": "string", "maxLength": 20 },
+        "email": { "type": "string", "maxLength": 100 },
+        "city": { "type": "string", "maxLength": 50 },
+        "state": { "type": "string", "maxLength": 50 },
+        "message": { "type": "string", "maxLength": 2000 },
+        "subject": { "type": "string", "maxLength": 150 }
+      },
+      "required": ["leadId", "name", "company", "phone", "email", "message", "subject"]
+    },
+    "counter": {
+      "title": "Counter",
+      "description": "Daily sequential counters to generate lead IDs safely.",
+      "type": "object",
+      "properties": {
+        "count": { "type": "integer" }
+      },
+      "required": ["count"]
+    }
+  },
+  "firestore": {
+    "/product_enquiries/{id}": {
+      "schema": "product_enquiry",
+      "description": "Product enquiries collection."
+    },
+    "/catalogue_downloads/{id}": {
+      "schema": "catalogue_download",
+      "description": "Catalogue downloads collection."
+    },
+    "/contact_enquiries/{id}": {
+      "schema": "contact_enquiry",
+      "description": "General contact enquiries collection."
+    },
+    "/counters/{id}": {
+      "schema": "counter",
+      "description": "Daily counter tracking collection."
+    }
+  }
+}
