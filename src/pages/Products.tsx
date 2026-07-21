@@ -1,18 +1,35 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, SlidersHorizontal, AlertCircle, FileText, ChevronRight, Download } from "lucide-react";
-import { PRODUCTS, CATEGORIES, Product } from "../productsData";
+import { Search, SlidersHorizontal, AlertCircle, FileText, ChevronRight, Download, Loader2 } from "lucide-react";
+import { CATEGORIES, Product } from "../productsData";
 import { getCategoryColor, getCategoryIcon } from "../utils/categoryHelpers";
+import { productService } from "../services/productService";
 import EnquiryModal from "../components/EnquiryModal";
 import CatalogueDownloadModal from "../components/CatalogueDownloadModal";
 
 export default function Products() {
   const navigate = useNavigate();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
   const [enquiryModalOpen, setEnquiryModalOpen] = useState(false);
   const [catalogueModalOpen, setCatalogueModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState("");
+
+  useEffect(() => {
+    const fetchLiveProducts = async () => {
+      try {
+        const liveList = await productService.getProducts(false); // Only published ones
+        setProducts(liveList);
+      } catch (err) {
+        console.error("Failed to load products from Firestore:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchLiveProducts();
+  }, []);
 
   const handleEnquireClick = (pName: string) => {
     setSelectedProduct(pName);
@@ -25,7 +42,7 @@ export default function Products() {
   };
 
   const filteredProducts = useMemo(() => {
-    return PRODUCTS.filter((prod) => {
+    return products.filter((prod) => {
       const matchesSearch =
         prod.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         prod.formula.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -37,7 +54,7 @@ export default function Products() {
 
       return matchesSearch && matchesCategory;
     });
-  }, [searchTerm, selectedCategory]);
+  }, [products, searchTerm, selectedCategory]);
 
   return (
     <div className="font-sans py-12 px-4 bg-gray-50 min-h-screen">
@@ -119,7 +136,7 @@ export default function Products() {
 
         {/* Results Info Bar */}
         <div className="flex justify-between items-center text-xs font-bold text-gray-500 uppercase tracking-wider">
-          <span>Showing {filteredProducts.length} of 26 Products</span>
+          <span>Showing {filteredProducts.length} of {products.length} Products</span>
           {selectedCategory !== "All Categories" && (
             <button
               onClick={() => setSelectedCategory("All Categories")}
@@ -131,7 +148,14 @@ export default function Products() {
         </div>
 
         {/* Product Catalogue Grid */}
-        {filteredProducts.length === 0 ? (
+        {loading ? (
+          <div className="bg-white rounded-lg border border-gray-200 py-24 text-center flex flex-col items-center justify-center gap-3">
+            <Loader2 className="w-10 h-10 text-corporate-blue animate-spin" />
+            <span className="text-xs font-semibold text-gray-400 uppercase tracking-widest mt-1">
+              Loading Portfolio Registry...
+            </span>
+          </div>
+        ) : filteredProducts.length === 0 ? (
           <div className="bg-white rounded-lg border border-gray-200 p-12 text-center flex flex-col items-center justify-center gap-4">
             <AlertCircle className="w-12 h-12 text-gray-300" />
             <div>

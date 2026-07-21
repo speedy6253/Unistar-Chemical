@@ -1,14 +1,7 @@
-export interface Product {
-  id: string;
-  name: string;
-  formula: string;
-  category: string;
-  description: string;
-  applications: string[];
-  keyBenefits: string[];
-  packaging: string;
-  image?: string;
-}
+import { Product as CentralProduct } from "./types/product";
+
+export type Product = CentralProduct;
+
 
 export const CATEGORIES = [
   "All Categories",

@@ -2,10 +2,11 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { 
   ArrowLeft, Beaker, CheckCircle2, ShieldCheck, AlertCircle, 
-  Send, PackageOpen, Info, FileText, ShieldAlert, Sparkles, ChevronRight
+  Send, PackageOpen, Info, FileText, ShieldAlert, Sparkles, ChevronRight, Loader2
 } from "lucide-react";
-import { PRODUCTS, Product } from "../productsData";
+import { Product } from "../productsData";
 import { getCategoryColor, getCategoryIcon } from "../utils/categoryHelpers";
+import { productService } from "../services/productService";
 import EnquiryModal from "../components/EnquiryModal";
 import ProductShowcase from "../components/ProductShowcase";
 
@@ -13,6 +14,8 @@ export default function ProductDetails() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [product, setProduct] = useState<Product | null>(null);
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const [enquiryModalOpen, setEnquiryModalOpen] = useState(false);
   const [selectedProductForEnquiry, setSelectedProductForEnquiry] = useState("");
 
@@ -28,13 +31,41 @@ export default function ProductDetails() {
   };
 
   useEffect(() => {
-    const foundProduct = PRODUCTS.find((p) => p.id === id);
-    if (foundProduct) {
-      setProduct(foundProduct);
-    } else {
-      setProduct(null);
+    if (id) {
+      const loadProductAndRelated = async () => {
+        setLoading(true);
+        try {
+          const mainProduct = await productService.getProduct(id);
+          setProduct(mainProduct);
+          if (mainProduct) {
+            const allProducts = await productService.getProducts(false); // Only published
+            const related = allProducts
+              .filter((p) => p.category === mainProduct.category && p.id !== mainProduct.id)
+              .slice(0, 3);
+            setRelatedProducts(related);
+          }
+        } catch (err) {
+          console.error("Failed to fetch product details:", err);
+          setProduct(null);
+        } finally {
+          setLoading(false);
+        }
+      };
+      loadProductAndRelated();
     }
   }, [id]);
+
+  if (loading) {
+    return (
+      <div className="font-sans py-20 px-4 text-center bg-gray-50 flex flex-col items-center justify-center min-h-screen">
+        <Loader2 className="w-12 h-12 text-corporate-blue mb-4 animate-spin" />
+        <h2 className="text-xl font-bold text-gray-800 uppercase tracking-wider">Resolving Chemical Record</h2>
+        <p className="text-gray-400 max-w-sm mt-2 text-xs leading-relaxed">
+          Retrieving technical specifications from our Firestore chemical registry...
+        </p>
+      </div>
+    );
+  }
 
   if (!product) {
     return (
@@ -53,10 +84,6 @@ export default function ProductDetails() {
       </div>
     );
   }
-
-  const relatedProducts = PRODUCTS.filter(
-    (p) => p.category === product.category && p.id !== product.id
-  ).slice(0, 3);
 
   const themeColors = getCategoryColor(product.category);
 

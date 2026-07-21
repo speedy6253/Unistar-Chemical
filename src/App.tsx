@@ -15,13 +15,62 @@ import Products from "./pages/Products";
 import ProductDetails from "./pages/ProductDetails";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
+import Media from "./pages/Media";
 
-// Automatically reset scroll position on route changes
+// Admin Imports
+import { AdminAuthProvider, useAdminAuth } from "./hooks/useAdminAuth";
+import Login from "./pages/admin/Login";
+import Dashboard from "./pages/admin/Dashboard";
+import AdminMedia from "./pages/admin/Media";
+import AdminProducts from "./pages/admin/Products";
+import AdminProductForm from "./pages/admin/ProductForm";
+import AdminProductPreview from "./pages/admin/ProductPreview";
+import AdminCategories from "./pages/admin/Categories";
+
+// Automates direct route redirection for /admin based on real-time auth status
+function AdminShortcutRedirect() {
+  const { adminUser, loading } = useAdminAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen w-full bg-gray-50 flex flex-col items-center justify-center relative z-50">
+        <div className="relative flex flex-col items-center gap-6">
+          <div className="w-16 h-16 border-4 border-t-[#2FA8B8] border-r-[#123C74] border-b-[#123C74] border-l-[#123C74]/20 rounded-full animate-spin" />
+          <div className="flex flex-col items-center text-center">
+            <span className="text-xs font-bold text-[#123C74] uppercase tracking-widest pl-3 border-l-4 border-[#2FA8B8]">
+              Unistar Corporate Portal
+            </span>
+            <span className="text-sm font-medium text-gray-500 mt-2">
+              Loading security portal...
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (adminUser) {
+    return <Navigate to="/admin/dashboard" replace />;
+  } else {
+    return <Navigate to="/admin/login" replace />;
+  }
+}
+
+// Automatically reset scroll position or scroll to anchor on route changes
 function ScrollToTop() {
-  const { pathname } = useLocation();
+  const { pathname, hash } = useLocation();
   useEffect(() => {
-    window.scrollTo({ top: 0 });
-  }, [pathname]);
+    if (hash) {
+      const element = document.getElementById(hash.slice(1));
+      if (element) {
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: "smooth" });
+        }, 100);
+      }
+    } else {
+      window.scrollTo({ top: 0 });
+    }
+  }, [pathname, hash]);
   return null;
 }
 
@@ -74,6 +123,18 @@ function AnimatedRoutes() {
           <Route path="/product/:id" element={<ProductDetails />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/media" element={<Media />} />
+          
+          {/* Admin secure portals */}
+          <Route path="/admin" element={<AdminShortcutRedirect />} />
+          <Route path="/admin/login" element={<Login />} />
+          <Route path="/admin/dashboard" element={<Dashboard />} />
+          <Route path="/admin/media" element={<AdminMedia />} />
+          <Route path="/admin/products" element={<AdminProducts />} />
+          <Route path="/admin/categories" element={<AdminCategories />} />
+          <Route path="/admin/products/new" element={<AdminProductForm />} />
+          <Route path="/admin/products/edit/:id" element={<AdminProductForm />} />
+          <Route path="/admin/products/preview/:id" element={<AdminProductPreview />} />
           
           {/* Fallback routing */}
           <Route path="*" element={<Navigate to="/" replace />} />
@@ -83,31 +144,43 @@ function AnimatedRoutes() {
   );
 }
 
-export default function App() {
+function AppContent() {
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith("/admin");
+
   return (
-    <Router>
-      <div className="flex flex-col min-h-screen bg-gray-50 text-gray-800 font-sans relative overflow-x-hidden">
-        {/* Reset window viewport scrolling */}
-        <ScrollToTop />
+    <div className="flex flex-col min-h-screen bg-gray-50 text-gray-800 font-sans relative overflow-x-hidden">
+      {/* Reset window viewport scrolling */}
+      <ScrollToTop />
 
-        {/* Floating micro-particle molecular overlay */}
-        <ChemicalTransition />
+      {/* Floating micro-particle molecular overlay */}
+      <ChemicalTransition />
 
-        {/* Corporate Topbar + Main Navbar */}
-        <Header />
+      {/* Corporate Topbar + Main Navbar (Omit for admin dashboard) */}
+      {!isAdminRoute && <Header />}
 
-        {/* Content routing stage with animated page transitions */}
-        <main className="flex-grow flex flex-col relative z-10">
-          <AnimatedRoutes />
-        </main>
+      {/* Content routing stage with animated page transitions */}
+      <main className="flex-grow flex flex-col relative z-10">
+        <AnimatedRoutes />
+      </main>
 
-        {/* B2B Footer */}
-        <Footer />
+      {/* B2B Footer (Omit for admin dashboard) */}
+      {!isAdminRoute && <Footer />}
 
-        {/* Floating Quick Action triggers (WhatsApp & Call) */}
-        <FloatingButtons />
-      </div>
-    </Router>
+      {/* Floating Quick Action triggers (WhatsApp & Call) (Omit for admin dashboard) */}
+      {!isAdminRoute && <FloatingButtons />}
+    </div>
   );
 }
+
+export default function App() {
+  return (
+    <AdminAuthProvider>
+      <Router>
+        <AppContent />
+      </Router>
+    </AdminAuthProvider>
+  );
+}
+
 

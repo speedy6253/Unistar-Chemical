@@ -2,7 +2,7 @@ import { Droplets, Pill, Coffee, Grid, PaintRoller, Flame, Leaf, Building } from
 
 export default function Industries() {
   return (
-    <section className="py-24 bg-gray-50/60 border-t border-b border-gray-100 relative overflow-hidden">
+    <section id="industries" className="py-24 bg-gray-50/60 border-t border-b border-gray-100 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 lg:px-8">
         
         {/* Header with Star and Lines */}

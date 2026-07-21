@@ -63,9 +63,77 @@
         "count": { "type": "integer" }
       },
       "required": ["count"]
+    },
+    "media_item": {
+      "title": "Media Item",
+      "description": "Corporate Media Center documents, videos, articles, and gallery items.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "maxLength": 150 },
+        "slug": { "type": "string", "maxLength": 150 },
+        "category": { "type": "string", "maxLength": 50 },
+        "type": { "type": "string", "maxLength": 20 },
+        "thumbnail": { "type": "string", "maxLength": 500 },
+        "image": { "type": "string", "maxLength": 500 },
+        "videoUrl": { "type": "string", "maxLength": 500 },
+        "articleUrl": { "type": "string", "maxLength": 500 },
+        "description": { "type": "string", "maxLength": 3000 },
+        "location": { "type": "string", "maxLength": 150 },
+        "publishedAt": { "type": "string", "maxLength": 50 },
+        "featured": { "type": "boolean" },
+        "sortOrder": { "type": "integer" },
+        "isPublished": { "type": "boolean" }
+      },
+      "required": ["title", "slug", "category", "type", "thumbnail", "image", "description", "featured", "sortOrder", "isPublished"]
+    },
+    "admin": {
+      "title": "Admin",
+      "description": "Administrator accounts with system access roles and statuses.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 150 },
+        "email": { "type": "string", "maxLength": 100 },
+        "role": { "type": "string", "maxLength": 50 },
+        "status": { "type": "string", "maxLength": 20 },
+        "createdAt": { "type": "string", "maxLength": 50 },
+        "lastLogin": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["uid", "name", "email", "role", "status", "createdAt"]
+    },
+    "product": {
+      "title": "Product",
+      "description": "Enterprise B2B chemical formulations.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "maxLength": 150 },
+        "slug": { "type": "string", "maxLength": 150 },
+        "category": { "type": "string", "maxLength": 50 },
+        "formula": { "type": "string", "maxLength": 50 },
+        "description": { "type": "string", "maxLength": 1000 },
+        "longDescription": { "type": "string", "maxLength": 5000 },
+        "casNumber": { "type": "string", "maxLength": 30 },
+        "hsnCode": { "type": "string", "maxLength": 30 },
+        "packaging": { "type": "string", "maxLength": 500 },
+        "storageInstructions": { "type": "string", "maxLength": 2000 },
+        "safetyInformation": { "type": "string", "maxLength": 2000 },
+        "technicalNotes": { "type": "string", "maxLength": 2000 },
+        "image": { "type": "string", "maxLength": 500 },
+        "pdfUrl": { "type": "string", "maxLength": 500 },
+        "featured": { "type": "boolean" },
+        "isPublished": { "type": "boolean" },
+        "seoTitle": { "type": "string", "maxLength": 150 },
+        "seoDescription": { "type": "string", "maxLength": 3000 },
+        "seoKeywords": { "type": "string", "maxLength": 500 }
+      },
+      "required": ["name", "slug", "category", "formula", "description", "packaging", "featured", "isPublished"]
     }
   },
   "firestore": {
+    "/products/{id}": {
+      "schema": "product",
+      "description": "Enterprise industrial chemical products."
+    },
     "/product_enquiries/{id}": {
       "schema": "product_enquiry",
       "description": "Product enquiries collection."
@@ -81,6 +149,14 @@
     "/counters/{id}": {
       "schema": "counter",
       "description": "Daily counter tracking collection."
+    },
+    "/media/{id}": {
+      "schema": "media_item",
+      "description": "Corporate Media Center items collection."
+    },
+    "/admins/{id}": {
+      "schema": "admin",
+      "description": "Registered administrator accounts."
     }
   }
 }

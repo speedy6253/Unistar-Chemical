@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { Phone, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
@@ -8,6 +8,7 @@ import EnquiryModal from "./EnquiryModal";
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [enquiryModalOpen, setEnquiryModalOpen] = useState(false);
+  const location = useLocation();
 
   return (
     <header className="w-full bg-white shadow-[0_2px_15px_rgba(18,60,116,0.03)] sticky top-0 z-40 h-[88px] flex items-center">
@@ -34,10 +35,30 @@ export default function Header() {
                   isActive ? "text-[#123C74]" : "text-gray-500 hover:text-[#123C74]"
                 }`
               }
+              end
             >
               {({ isActive }) => (
                 <>
                   Home
+                  <span
+                    className={`absolute bottom-0 left-0 h-[3px] bg-[#123C74] transition-all duration-250 rounded-full ${
+                      isActive ? "w-full" : "w-0 group-hover:w-full"
+                    }`}
+                  />
+                </>
+              )}
+            </NavLink>
+            <NavLink
+              to="/about"
+              className={({ isActive }) =>
+                `relative py-2 text-[16px] font-medium tracking-normal transition-colors duration-250 group ${
+                  isActive ? "text-[#123C74]" : "text-gray-500 hover:text-[#123C74]"
+                }`
+              }
+            >
+              {({ isActive }) => (
+                <>
+                  About
                   <span
                     className={`absolute bottom-0 left-0 h-[3px] bg-[#123C74] transition-all duration-250 rounded-full ${
                       isActive ? "w-full" : "w-0 group-hover:w-full"
@@ -65,8 +86,9 @@ export default function Header() {
                 </>
               )}
             </NavLink>
+
             <NavLink
-              to="/about"
+              to="/media"
               className={({ isActive }) =>
                 `relative py-2 text-[16px] font-medium tracking-normal transition-colors duration-250 group ${
                   isActive ? "text-[#123C74]" : "text-gray-500 hover:text-[#123C74]"
@@ -75,7 +97,7 @@ export default function Header() {
             >
               {({ isActive }) => (
                 <>
-                  About
+                  Media Center
                   <span
                     className={`absolute bottom-0 left-0 h-[3px] bg-[#123C74] transition-all duration-250 rounded-full ${
                       isActive ? "w-full" : "w-0 group-hover:w-full"
@@ -193,8 +215,20 @@ export default function Header() {
                       isActive ? "text-[#123C74] font-bold" : "text-gray-600 hover:text-[#123C74]"
                     }`
                   }
+                  end
                 >
                   Home
+                </NavLink>
+                <NavLink
+                  to="/about"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={({ isActive }) =>
+                    `text-lg font-medium tracking-normal py-2 border-b border-gray-50 transition-colors ${
+                      isActive ? "text-[#123C74] font-bold" : "text-gray-600 hover:text-[#123C74]"
+                    }`
+                  }
+                >
+                  About
                 </NavLink>
                 <NavLink
                   to="/products"
@@ -207,8 +241,9 @@ export default function Header() {
                 >
                   Products
                 </NavLink>
+
                 <NavLink
-                  to="/about"
+                  to="/media"
                   onClick={() => setMobileMenuOpen(false)}
                   className={({ isActive }) =>
                     `text-lg font-medium tracking-normal py-2 border-b border-gray-50 transition-colors ${
@@ -216,7 +251,7 @@ export default function Header() {
                     }`
                   }
                 >
-                  About
+                  Media Center
                 </NavLink>
                 <NavLink
                   to="/contact"

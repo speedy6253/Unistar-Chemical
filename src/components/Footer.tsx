@@ -71,13 +71,19 @@ export default function Footer() {
               </NavLink>
             </li>
             <li>
+              <NavLink to="/about" className="hover:text-white transition-colors">
+                ABOUT UNISTAR
+              </NavLink>
+            </li>
+            <li>
               <NavLink to="/products" className="hover:text-white transition-colors">
                 PRODUCTS CATALOGUE
               </NavLink>
             </li>
+
             <li>
-              <NavLink to="/about" className="hover:text-white transition-colors">
-                ABOUT UNISTAR
+              <NavLink to="/media" className="hover:text-white transition-colors">
+                MEDIA CENTER
               </NavLink>
             </li>
             <li>

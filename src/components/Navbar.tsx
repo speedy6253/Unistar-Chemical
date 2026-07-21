@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { Phone, Menu, X, MessageSquare } from "lucide-react";
 import { useState } from "react";
 import { BUSINESS_INFO } from "../productsData";
@@ -7,6 +7,7 @@ import EnquiryModal from "./EnquiryModal";
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [enquiryModalOpen, setEnquiryModalOpen] = useState(false);
+  const location = useLocation();
 
   return (
     <header className="w-full bg-white shadow-xs sticky top-0 z-40 border-b border-gray-100/80 h-[90px] flex items-center">
@@ -45,10 +46,30 @@ export default function Navbar() {
                     : "text-gray-500 hover:text-[#123C74]"
                 }`
               }
+              end
             >
               {({ isActive }) => (
                 <>
                   HOME
+                  {isActive && (
+                    <span className="absolute bottom-0 left-4 right-4 h-[3px] bg-[#123C74] rounded-full" />
+                  )}
+                </>
+              )}
+            </NavLink>
+            <NavLink
+              to="/about"
+              className={({ isActive }) =>
+                `px-4 h-full flex items-center text-xs font-semibold tracking-widest transition-all relative ${
+                  isActive
+                    ? "text-[#123C74]"
+                    : "text-gray-500 hover:text-[#123C74]"
+                }`
+              }
+            >
+              {({ isActive }) => (
+                <>
+                  ABOUT US
                   {isActive && (
                     <span className="absolute bottom-0 left-4 right-4 h-[3px] bg-[#123C74] rounded-full" />
                   )}
@@ -74,8 +95,9 @@ export default function Navbar() {
                 </>
               )}
             </NavLink>
+
             <NavLink
-              to="/about"
+              to="/media"
               className={({ isActive }) =>
                 `px-4 h-full flex items-center text-xs font-semibold tracking-widest transition-all relative ${
                   isActive
@@ -86,7 +108,7 @@ export default function Navbar() {
             >
               {({ isActive }) => (
                 <>
-                  ABOUT US
+                  MEDIA
                   {isActive && (
                     <span className="absolute bottom-0 left-4 right-4 h-[3px] bg-[#123C74] rounded-full" />
                   )}
@@ -159,8 +181,20 @@ export default function Navbar() {
                 isActive ? "bg-blue-50 text-[#123C74]" : "text-gray-600 hover:bg-gray-50"
               }`
             }
+            end
           >
             HOME
+          </NavLink>
+          <NavLink
+            to="/about"
+            onClick={() => setMobileMenuOpen(false)}
+            className={({ isActive }) =>
+              `px-3 py-2.5 rounded font-bold text-sm tracking-wide ${
+                isActive ? "bg-blue-50 text-[#123C74]" : "text-gray-500 hover:bg-gray-50"
+              }`
+            }
+          >
+            ABOUT US
           </NavLink>
           <NavLink
             to="/products"
@@ -173,8 +207,9 @@ export default function Navbar() {
           >
             PRODUCTS
           </NavLink>
+
           <NavLink
-            to="/about"
+            to="/media"
             onClick={() => setMobileMenuOpen(false)}
             className={({ isActive }) =>
               `px-3 py-2.5 rounded font-bold text-sm tracking-wide ${
@@ -182,7 +217,7 @@ export default function Navbar() {
               }`
             }
           >
-            ABOUT US
+            MEDIA
           </NavLink>
           <NavLink
             to="/contact"
