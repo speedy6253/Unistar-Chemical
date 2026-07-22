@@ -4,7 +4,7 @@ import {
 } from "lucide-react";
 import { BUSINESS_INFO } from "../productsData";
 
-export default function About() {
+export default function Quality() {
   return (
     <div className="font-sans bg-gray-50 py-12 px-4">
       <div className="max-w-7xl mx-auto flex flex-col gap-12">
@@ -13,10 +13,10 @@ export default function About() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 border-b border-gray-200 pb-6">
           <div className="flex flex-col gap-2">
             <span className="text-xs font-extrabold text-corporate-blue uppercase tracking-widest pl-2 border-l-4 border-corporate-blue">
-              About Unistar Chemicals
+              Quality & Assurance
             </span>
             <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">
-              Company Overview & Values
+              Quality Policy & Infrastructure Overview
             </h1>
           </div>
           <p className="text-xs md:text-sm text-gray-500 max-w-md">
@@ -108,13 +108,13 @@ export default function About() {
         </div>
 
         {/* 3. Quality Assurance Section */}
-        <section className="py-12 px-6 bg-white rounded-lg border border-gray-200 shadow-xs">
+        <section id="quality" className="py-12 px-6 bg-white rounded-lg border border-gray-200 shadow-xs">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-5 relative">
               {/* Visual chemistry image */}
               <div className="rounded-2xl overflow-hidden shadow-xl border border-gray-200 bg-white p-2">
                 <img
-                  src="https://images.unsplash.com/photo-1608155686393-8fdd966d784d?q=80&w=600&auto=format&fit=crop"
+                  src="https://i.ibb.co/wrcBKVKW/Rigorous-Quality-Checks-Compliant-Standards.png"
                   alt="Unistar Chemical QC Quality Assurance Lab Equipment"
                   className="w-full h-80 object-cover rounded-xl"
                   referrerPolicy="no-referrer"
@@ -182,7 +182,7 @@ export default function About() {
             <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-xs flex flex-col">
               <div className="h-48 overflow-hidden bg-gray-900">
                 <img
-                  src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=500&auto=format&fit=crop"
+                  src="https://i.ibb.co/1JX1pDX1/Industrial-Warehouse.png"
                   alt="Industrial Chemical Warehouse Shelving Storage"
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                   referrerPolicy="no-referrer"
@@ -200,7 +200,7 @@ export default function About() {
             <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-xs flex flex-col">
               <div className="h-48 overflow-hidden bg-gray-900">
                 <img
-                  src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?q=80&w=500&auto=format&fit=crop"
+                  src="https://i.ibb.co/twPZbVYK/Storage-and-packing-yard.png"
                   alt="Safe Chemical Drums Storage Packing"
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                   referrerPolicy="no-referrer"
@@ -218,7 +218,7 @@ export default function About() {
             <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-xs flex flex-col">
               <div className="h-48 overflow-hidden bg-gray-900">
                 <img
-                  src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=500&auto=format&fit=crop"
+                  src="https://i.ibb.co/6RhZfk90/Corporate-Office.png"
                   alt="Corporate procurement office desk Kolkata"
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                   referrerPolicy="no-referrer"
@@ -247,9 +247,7 @@ export default function About() {
                 <p className="text-[10px] text-gray-400">Sector V, Salt Lake, Kolkata, West Bengal</p>
               </div>
             </div>
-            {/* Highly customized visual map mockup with leaflet/osm iframe or beautiful schematic overlay */}
             <div className="relative bg-blue-50 border border-blue-100 rounded-md h-72 overflow-hidden flex items-center justify-center">
-              {/* Clean Map visual using standard maps embedding or highly styled CSS map representing our location */}
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3684.0539121669466!2d88.4283896!3d22.5724264!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a0275af00000001%3A0xb3ca6ef16e5cd6e9!2sSector%20V%2C%20Salt%20Lake%20City%2C%20Kolkata%2C%20West%20Bengal%20700091!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
                 className="w-full h-full border-0"

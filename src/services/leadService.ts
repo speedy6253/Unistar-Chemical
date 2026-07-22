@@ -131,6 +131,51 @@ function buildLeadMetadata() {
   };
 }
 
+// Helper to send server-side email notification silently in the background
+async function sendServerEmailNotification(payload: {
+  submissionType: "Product Enquiry" | "Catalogue Download" | "General Enquiry";
+  leadId: string;
+  docId?: string;
+  name: string;
+  company: string;
+  designation?: string;
+  phone: string;
+  whatsapp?: string;
+  email: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  productCategory?: string;
+  selectedProduct?: string;
+  downloadedCatalogue?: string;
+  requiredQuantity?: string;
+  message?: string;
+  sourcePage?: string;
+}) {
+  try {
+    const response = await fetch("/api/send-email", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ...payload,
+        timestamp: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
+      }),
+    });
+
+    if (!response.ok) {
+      console.warn(`[EMAIL WARNING] Background server email endpoint returned HTTP ${response.status}`);
+    } else {
+      const data = await response.json();
+      console.log("[EMAIL SUCCESS] Background email notification logged/sent:", data);
+    }
+  } catch (error) {
+    // Non-blocking: background email failure must NOT interrupt visitor or throw exception
+    console.error("[EMAIL ERROR] Background server email notification failed silently:", error);
+  }
+}
+
 // Service interfaces for inputs
 export interface ProductEnquiryInput {
   name: string;
@@ -193,6 +238,26 @@ export const leadService = {
 
     const docRef = await addDoc(collection(db, collectionName), docData);
     recordSubmission(input.email, input.phone);
+
+    // Trigger server-side background email notification silently
+    sendServerEmailNotification({
+      submissionType: "Product Enquiry",
+      leadId,
+      docId: docRef.id,
+      name: input.name,
+      company: input.company,
+      phone: input.phone,
+      whatsapp: input.whatsapp,
+      email: input.email,
+      city: input.city,
+      state: input.state,
+      country: "India",
+      selectedProduct: input.productName,
+      requiredQuantity: input.quantity,
+      message: input.message,
+      sourcePage: typeof window !== "undefined" ? window.location.href : "Website",
+    });
+
     return leadId;
   },
 
@@ -219,6 +284,25 @@ export const leadService = {
 
     const docRef = await addDoc(collection(db, collectionName), docData);
     recordSubmission(input.email, input.phone);
+
+    // Trigger server-side background email notification silently
+    sendServerEmailNotification({
+      submissionType: "Catalogue Download",
+      leadId,
+      docId: docRef.id,
+      name: input.name,
+      company: input.company,
+      phone: input.phone,
+      whatsapp: input.whatsapp,
+      email: input.email,
+      city: input.city,
+      state: input.state,
+      country: "India",
+      downloadedCatalogue: input.downloadedCatalogue,
+      message: input.message || "Requesting catalogue and wholesale quotations.",
+      sourcePage: typeof window !== "undefined" ? window.location.href : "Website",
+    });
+
     return leadId;
   },
 
@@ -244,6 +328,24 @@ export const leadService = {
 
     const docRef = await addDoc(collection(db, collectionName), docData);
     recordSubmission(input.email, input.phone);
+
+    // Trigger server-side background email notification silently
+    sendServerEmailNotification({
+      submissionType: "General Enquiry",
+      leadId,
+      docId: docRef.id,
+      name: input.name,
+      company: input.company,
+      phone: input.phone,
+      whatsapp: input.whatsapp,
+      email: input.email,
+      city: input.city,
+      state: input.state,
+      country: "India",
+      message: input.message,
+      sourcePage: typeof window !== "undefined" ? window.location.href : "Website",
+    });
+
     return leadId;
   }
 };

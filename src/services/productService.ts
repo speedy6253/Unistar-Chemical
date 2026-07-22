@@ -71,67 +71,75 @@ export const productService = {
    */
   async getProducts(includeUnpublished = false): Promise<Product[]> {
     const path = "products";
+    const staticList = PRODUCTS.map(p => ({
+      ...p,
+      slug: p.id,
+      isPublished: true,
+      featured: false,
+      images: p.image ? [p.image] : [],
+      specifications: p.keyBenefits
+    }));
+
     try {
-      let q;
+      let snapshot;
       if (includeUnpublished) {
-        q = query(collection(db, path), orderBy("name", "asc"));
+        const q = query(collection(db, path), orderBy("name", "asc"));
+        snapshot = await getDocs(q);
       } else {
-        q = query(collection(db, path), where("isPublished", "==", true));
+        try {
+          const q = query(collection(db, path), where("isPublished", "==", true));
+          snapshot = await getDocs(q);
+        } catch (queryErr) {
+          console.warn("Query with isPublished filter failed, falling back to all docs query:", queryErr);
+          const q = collection(db, path);
+          snapshot = await getDocs(q);
+        }
       }
 
-      const snapshot = await getDocs(q);
-
       if (snapshot.empty) {
-        // If empty on public side, or if we want static list
-        const staticList = PRODUCTS.map(p => ({
-          ...p,
-          slug: p.id,
-          isPublished: true,
-          featured: false,
-          images: p.image ? [p.image] : [],
-          specifications: p.keyBenefits
-        }));
         return staticList;
       }
 
       const products: Product[] = [];
       snapshot.forEach((doc) => {
         const data = doc.data() as any;
-        products.push({
-          id: doc.id,
-          name: data.name || "",
-          slug: data.slug || doc.id,
-          category: data.category || "",
-          formula: data.formula || "",
-          description: data.description || "",
-          longDescription: data.longDescription || "",
-          casNumber: data.casNumber || "",
-          hsnCode: data.hsnCode || "",
-          applications: Array.isArray(data.applications) ? data.applications : [],
-          keyBenefits: Array.isArray(data.keyBenefits) ? data.keyBenefits : [],
-          specifications: Array.isArray(data.specifications) ? data.specifications : [],
-          packaging: data.packaging || "",
-          storageInstructions: data.storageInstructions || "",
-          safetyInformation: data.safetyInformation || "",
-          technicalNotes: data.technicalNotes || "",
-          image: data.image || "",
-          images: Array.isArray(data.images) ? data.images : [],
-          pdfUrl: data.pdfUrl || "",
-          featured: !!data.featured,
-          isPublished: typeof data.isPublished === "boolean" ? data.isPublished : true,
-          seoTitle: data.seoTitle || "",
-          seoDescription: data.seoDescription || "",
-          seoKeywords: data.seoKeywords || "",
-          createdAt: data.createdAt,
-          updatedAt: data.updatedAt
-        });
+        const isPub = typeof data.isPublished === "boolean" ? data.isPublished : true;
+        if (includeUnpublished || isPub) {
+          products.push({
+            id: doc.id,
+            name: data.name || "",
+            slug: data.slug || doc.id,
+            category: data.category || "",
+            formula: data.formula || "",
+            description: data.description || "",
+            longDescription: data.longDescription || "",
+            casNumber: data.casNumber || "",
+            hsnCode: data.hsnCode || "",
+            applications: Array.isArray(data.applications) ? data.applications : [],
+            keyBenefits: Array.isArray(data.keyBenefits) ? data.keyBenefits : [],
+            specifications: Array.isArray(data.specifications) ? data.specifications : [],
+            packaging: data.packaging || "",
+            storageInstructions: data.storageInstructions || "",
+            safetyInformation: data.safetyInformation || "",
+            technicalNotes: data.technicalNotes || "",
+            image: data.image || "",
+            images: Array.isArray(data.images) ? data.images : [],
+            pdfUrl: data.pdfUrl || "",
+            featured: !!data.featured,
+            isPublished: isPub,
+            seoTitle: data.seoTitle || "",
+            seoDescription: data.seoDescription || "",
+            seoKeywords: data.seoKeywords || "",
+            createdAt: data.createdAt,
+            updatedAt: data.updatedAt
+          });
+        }
       });
 
-      // Maintain sorting on client if necessary, or just return
-      return products;
+      return products.length > 0 ? products : staticList;
     } catch (error) {
-      handleFirestoreError(error, OperationType.LIST, path);
-      return [];
+      console.warn("Firestore getProducts encountered error, returning static fallback:", error);
+      return staticList;
     }
   },
 
@@ -141,6 +149,16 @@ export const productService = {
    */
   async getProduct(id: string): Promise<Product | null> {
     const path = `products/${id}`;
+    const preloaded = PRODUCTS.find(p => p.id === id);
+    const staticFallback = preloaded ? {
+      ...preloaded,
+      slug: preloaded.id,
+      isPublished: true,
+      featured: false,
+      images: preloaded.image ? [preloaded.image] : [],
+      specifications: preloaded.keyBenefits
+    } : null;
+
     try {
       const docRef = doc(db, "products", id);
       const snapshot = await getDoc(docRef);
@@ -177,23 +195,10 @@ export const productService = {
         };
       }
 
-      // Fallback to preloaded items
-      const preloaded = PRODUCTS.find(p => p.id === id);
-      if (preloaded) {
-        return {
-          ...preloaded,
-          slug: preloaded.id,
-          isPublished: true,
-          featured: false,
-          images: preloaded.image ? [preloaded.image] : [],
-          specifications: preloaded.keyBenefits
-        };
-      }
-
-      return null;
+      return staticFallback;
     } catch (error) {
-      handleFirestoreError(error, OperationType.GET, path);
-      return null;
+      console.warn("Firestore getProduct error, returning static fallback:", error);
+      return staticFallback;
     }
   },
 

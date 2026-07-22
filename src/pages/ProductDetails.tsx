@@ -4,7 +4,7 @@ import {
   ArrowLeft, Beaker, CheckCircle2, ShieldCheck, AlertCircle, 
   Send, PackageOpen, Info, FileText, ShieldAlert, Sparkles, ChevronRight, Loader2
 } from "lucide-react";
-import { Product } from "../productsData";
+import { Product, PRODUCTS } from "../productsData";
 import { getCategoryColor, getCategoryIcon } from "../utils/categoryHelpers";
 import { productService } from "../services/productService";
 import EnquiryModal from "../components/EnquiryModal";
@@ -35,8 +35,22 @@ export default function ProductDetails() {
       const loadProductAndRelated = async () => {
         setLoading(true);
         try {
-          const mainProduct = await productService.getProduct(id);
+          let mainProduct = await productService.getProduct(id);
+          if (!mainProduct) {
+            const preloaded = PRODUCTS.find(p => p.id === id);
+            if (preloaded) {
+              mainProduct = {
+                ...preloaded,
+                slug: preloaded.id,
+                isPublished: true,
+                featured: false,
+                images: preloaded.image ? [preloaded.image] : [],
+                specifications: preloaded.keyBenefits
+              };
+            }
+          }
           setProduct(mainProduct);
+
           if (mainProduct) {
             const allProducts = await productService.getProducts(false); // Only published
             const related = allProducts
@@ -46,7 +60,17 @@ export default function ProductDetails() {
           }
         } catch (err) {
           console.error("Failed to fetch product details:", err);
-          setProduct(null);
+          const preloaded = PRODUCTS.find(p => p.id === id);
+          if (preloaded) {
+            setProduct({
+              ...preloaded,
+              slug: preloaded.id,
+              isPublished: true,
+              featured: false,
+              images: preloaded.image ? [preloaded.image] : [],
+              specifications: preloaded.keyBenefits
+            });
+          }
         } finally {
           setLoading(false);
         }

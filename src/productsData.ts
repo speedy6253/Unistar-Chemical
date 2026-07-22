@@ -30,7 +30,7 @@ export const BUSINESS_INFO = {
   companyName: "Unistar Chemicals",
   headOffice: "B6-152/NEW UNION BOARD, Kolkata – 700141",
   corporateOffice: "Mraj Premiere, EN-37, Sector V, Kolkata, West Bengal – 700091",
-  email: "info@unisterchemicalsl.in",
+  email: "info@unistarchemicals.in",
   phone: "+91 95066 05275",
   whatsapp: "+91 95066 05275",
   whatsappUrlNumber: "919506605275",
@@ -616,7 +616,7 @@ export const PRODUCTS: Product[] = [
 export const FAQS = [
   {
     question: "How do I request a quotation for industrial chemicals?",
-    answer: "You can request a quotation by clicking 'Enquire Now' on any product card, or by visiting our Contact page and filling out the enquiry form. Upon submitting, a pre-filled WhatsApp message will be generated for instant communication. You can also email us directly at info@unisterchemicalsl.in."
+    answer: "You can request a quotation by clicking 'Enquire Now' on any product card, or by visiting our Contact page and filling out the enquiry form. Upon submitting, a pre-filled WhatsApp message will be generated for instant communication. You can also email us directly at info@unistarchemicals.in."
   },
   {
     question: "Do you supply chemicals across India?",

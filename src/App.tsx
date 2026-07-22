@@ -13,9 +13,10 @@ import ChemicalTransition from "./components/ChemicalTransition";
 import Home from "./pages/Home";
 import Products from "./pages/Products";
 import ProductDetails from "./pages/ProductDetails";
-import About from "./pages/About";
+import Quality from "./pages/Quality";
 import Contact from "./pages/Contact";
 import Media from "./pages/Media";
+import Careers from "./pages/Careers";
 
 // Admin Imports
 import { AdminAuthProvider, useAdminAuth } from "./hooks/useAdminAuth";
@@ -121,7 +122,8 @@ function AnimatedRoutes() {
           <Route path="/" element={<Home />} />
           <Route path="/products" element={<Products />} />
           <Route path="/product/:id" element={<ProductDetails />} />
-          <Route path="/about" element={<About />} />
+          <Route path="/quality" element={<Quality />} />
+          <Route path="/careers" element={<Careers />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/media" element={<Media />} />
           
@@ -156,7 +158,7 @@ function AppContent() {
       {/* Floating micro-particle molecular overlay */}
       <ChemicalTransition />
 
-      {/* Corporate Topbar + Main Navbar (Omit for admin dashboard) */}
+      {/* Corporate Topbar + Main Enterprise Header (Omit for admin dashboard) */}
       {!isAdminRoute && <Header />}
 
       {/* Content routing stage with animated page transitions */}

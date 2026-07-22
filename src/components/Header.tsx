@@ -1,304 +1,335 @@
-import { NavLink, useLocation } from "react-router-dom";
-import { Phone, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { Phone, Menu, X, ArrowRight, FileText, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import logoImg from "../assets/logo.png";
 import { BUSINESS_INFO } from "../productsData";
 import EnquiryModal from "./EnquiryModal";
 
+interface NavItem {
+  name: string;
+  path: string;
+}
+
+const NAV_ITEMS: NavItem[] = [
+  { name: "Home", path: "/" },
+  { name: "Products", path: "/products" },
+  { name: "Careers", path: "/careers" },
+  { name: "Quality", path: "/quality" },
+  { name: "Media", path: "/media" },
+  { name: "Contact", path: "/contact" },
+];
+
 export default function Header() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [enquiryModalOpen, setEnquiryModalOpen] = useState(false);
   const location = useLocation();
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isEnquiryOpen, setIsEnquiryOpen] = useState(false);
+  const [hoveredPath, setHoveredPath] = useState<string | null>(null);
+
+  // Monitor scroll position to toggle compact sticky header & subtle shadow
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 20) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Listen for Escape key to dismiss mobile drawer
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && mobileMenuOpen) {
+        setMobileMenuOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [mobileMenuOpen]);
+
+  // Lock body scroll when mobile menu drawer is expanded
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [mobileMenuOpen]);
+
+  // Determine active route or hash section
+  const isPathActive = (path: string) => {
+    if (path === "/") {
+      return location.pathname === "/" && !location.hash;
+    }
+    if (path.includes("#")) {
+      const [basePath, hash] = path.split("#");
+      const currentBase = basePath === "" ? "/" : basePath;
+      return location.pathname === currentBase && location.hash === `#${hash}`;
+    }
+    return location.pathname.startsWith(path);
+  };
 
   return (
-    <header className="w-full bg-white shadow-[0_2px_15px_rgba(18,60,116,0.03)] sticky top-0 z-40 h-[88px] flex items-center">
-      {/* Main Navbar - Perfect spacing matching reference */}
-      <div className="w-full px-4 lg:px-8 bg-white h-full flex items-center">
-        <div className="max-w-[1320px] w-full mx-auto flex justify-between items-center h-full">
-          
-          {/* Left Side: Brand Logo ONLY. No text logo as instructed. */}
-          <NavLink to="/" className="flex items-center select-none shrink-0" aria-label="Unistar Chemicals Home">
-            <img
-              src="https://i.ibb.co/BH2rsRW2/Unistar-logo.png"
-              alt="Unistar Chemicals"
-              className="h-[50px] w-auto object-contain transition-transform duration-500 hover:scale-105"
-              referrerPolicy="no-referrer"
-            />
-          </NavLink>
-
-          {/* Center Navigation - Clean placement with 40px gap, Inter font, 16px size, 500 weight, normal tracking */}
-          <nav className="hidden min-[992px]:flex items-center gap-[40px] h-full font-sans">
-            <NavLink
-              to="/"
-              className={({ isActive }) =>
-                `relative py-2 text-[16px] font-medium tracking-normal transition-colors duration-250 group ${
-                  isActive ? "text-[#123C74]" : "text-gray-500 hover:text-[#123C74]"
-                }`
-              }
-              end
-            >
-              {({ isActive }) => (
-                <>
-                  Home
-                  <span
-                    className={`absolute bottom-0 left-0 h-[3px] bg-[#123C74] transition-all duration-250 rounded-full ${
-                      isActive ? "w-full" : "w-0 group-hover:w-full"
-                    }`}
-                  />
-                </>
-              )}
-            </NavLink>
-            <NavLink
-              to="/about"
-              className={({ isActive }) =>
-                `relative py-2 text-[16px] font-medium tracking-normal transition-colors duration-250 group ${
-                  isActive ? "text-[#123C74]" : "text-gray-500 hover:text-[#123C74]"
-                }`
-              }
-            >
-              {({ isActive }) => (
-                <>
-                  About
-                  <span
-                    className={`absolute bottom-0 left-0 h-[3px] bg-[#123C74] transition-all duration-250 rounded-full ${
-                      isActive ? "w-full" : "w-0 group-hover:w-full"
-                    }`}
-                  />
-                </>
-              )}
-            </NavLink>
-            <NavLink
-              to="/products"
-              className={({ isActive }) =>
-                `relative py-2 text-[16px] font-medium tracking-normal transition-colors duration-250 group ${
-                  isActive ? "text-[#123C74]" : "text-gray-500 hover:text-[#123C74]"
-                }`
-              }
-            >
-              {({ isActive }) => (
-                <>
-                  Products
-                  <span
-                    className={`absolute bottom-0 left-0 h-[3px] bg-[#123C74] transition-all duration-250 rounded-full ${
-                      isActive ? "w-full" : "w-0 group-hover:w-full"
-                    }`}
-                  />
-                </>
-              )}
-            </NavLink>
-
-            <NavLink
-              to="/media"
-              className={({ isActive }) =>
-                `relative py-2 text-[16px] font-medium tracking-normal transition-colors duration-250 group ${
-                  isActive ? "text-[#123C74]" : "text-gray-500 hover:text-[#123C74]"
-                }`
-              }
-            >
-              {({ isActive }) => (
-                <>
-                  Media Center
-                  <span
-                    className={`absolute bottom-0 left-0 h-[3px] bg-[#123C74] transition-all duration-250 rounded-full ${
-                      isActive ? "w-full" : "w-0 group-hover:w-full"
-                    }`}
-                  />
-                </>
-              )}
-            </NavLink>
-            <NavLink
-              to="/contact"
-              className={({ isActive }) =>
-                `relative py-2 text-[16px] font-medium tracking-normal transition-colors duration-250 group ${
-                  isActive ? "text-[#123C74]" : "text-gray-500 hover:text-[#123C74]"
-                }`
-              }
-            >
-              {({ isActive }) => (
-                <>
-                  Contact
-                  <span
-                    className={`absolute bottom-0 left-0 h-[3px] bg-[#123C74] transition-all duration-250 rounded-full ${
-                      isActive ? "w-full" : "w-0 group-hover:w-full"
-                    }`}
-                  />
-                </>
-              )}
-            </NavLink>
-          </nav>
-
-          {/* Right Side - Phone Number & Primary CTA Button - Matching reference precisely */}
-          <div className="hidden min-[992px]:flex items-center gap-8 h-full">
-            <a
-              href={`tel:${BUSINESS_INFO.phone.replace(/\s+/g, "")}`}
-              className="flex items-center gap-2.5 hover:opacity-85 transition-opacity duration-200"
-            >
-              <Phone className="w-5 h-5 text-[#123C74]" />
-              <span className="font-bold text-[15px] text-[#123C74] font-sans tracking-wide">
-                {BUSINESS_INFO.phone}
-              </span>
-            </a>
+    <>
+      <header
+        role="banner"
+        className={`sticky top-0 z-50 bg-white border-b border-slate-200/80 transition-all duration-300 ease-in-out ${
+          scrolled
+            ? "py-2.5 shadow-md shadow-slate-900/5"
+            : "py-4 shadow-sm shadow-slate-900/5"
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between gap-4">
             
-            <button
-              onClick={() => setEnquiryModalOpen(true)}
-              className="h-12 px-8 bg-[#123C74] hover:bg-[#1D5A92] text-white rounded-[12px] font-bold text-xs tracking-wider transition-all duration-250 shadow-sm hover:-translate-y-[2px] flex items-center justify-center gap-2 uppercase"
-              id="header-enquire-btn"
-            >
-              <span>Request a Quote</span>
-            </button>
-          </div>
+            {/* LEFT SIDE: Official Corporate Logo */}
+            <div className="flex items-center gap-3 shrink-0">
+              <Link
+                to="/"
+                aria-label="Unistar Chemicals - Return to Homepage"
+                className="group flex items-center gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0e7490] focus-visible:ring-offset-2 rounded-lg transition-transform"
+              >
+                {/* Logo Image - Pristine transparent background */}
+                <img
+                  src={logoImg}
+                  alt="Unistar Chemicals Official Logo"
+                  className={`object-contain transition-all duration-300 ease-in-out ${
+                    scrolled ? "h-9 lg:h-10" : "h-10 lg:h-12"
+                  } w-auto`}
+                />
 
-          {/* Mobile Menu Trigger & Responsive CTA Button */}
-          <div className="flex min-[992px]:hidden items-center gap-4">
-            <button
-              onClick={() => setEnquiryModalOpen(true)}
-              className="h-10 px-5 bg-[#123C74] hover:bg-[#1D5A92] text-white rounded-[10px] font-bold text-[11px] tracking-wider transition-all duration-250 shadow-sm hover:-translate-y-[2px] flex items-center justify-center uppercase max-[440px]:hidden"
+                {/* Company Name - Visible ONLY on Mobile & Tablet (< lg), Strictly HIDDEN on Desktop (lg+) */}
+                <div className="flex flex-col lg:hidden">
+                  <span className="font-extrabold text-slate-900 text-base sm:text-lg tracking-wider uppercase font-sans leading-none">
+                    UNISTAR CHEMICALS
+                  </span>
+                  <span className="text-[10px] font-semibold tracking-widest text-[#0e7490] uppercase mt-0.5">
+                    Industrial B2B Solutions
+                  </span>
+                </div>
+              </Link>
+            </div>
+
+            {/* CENTER: Desktop Navigation Menu */}
+            <nav
+              role="navigation"
+              aria-label="Main Navigation"
+              className="hidden lg:flex items-center justify-center gap-1 xl:gap-1.5"
             >
-              Enquire
-            </button>
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2.5 text-[#123C74] hover:bg-gray-50 rounded-xl transition-colors"
-              aria-label="Toggle Menu"
-              id="mobile-menu-toggle"
-            >
-              <Menu className="w-6 h-6" />
-            </button>
+              {NAV_ITEMS.map((item) => {
+                const active = isPathActive(item.path);
+                const isHovered = hoveredPath === item.path;
+
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    onMouseEnter={() => setHoveredPath(item.path)}
+                    onMouseLeave={() => setHoveredPath(null)}
+                    aria-current={active ? "page" : undefined}
+                    className={`relative px-3.5 py-2 text-sm font-medium transition-colors duration-200 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0e7490] ${
+                      active
+                        ? "text-[#0e7490] font-bold"
+                        : "text-slate-600 hover:text-slate-900"
+                    }`}
+                  >
+                    {/* Hover Glow Effect - Soft brand color ambient glow */}
+                    <AnimatePresence>
+                      {isHovered && (
+                        <motion.span
+                          layoutId="hoverGlow"
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.95 }}
+                          transition={{ duration: 0.2, ease: "easeOut" }}
+                          className="absolute inset-0 bg-[#0e7490]/10 rounded-lg shadow-[0_0_15px_rgba(14,116,144,0.18)] -z-10 pointer-events-none"
+                        />
+                      )}
+                    </AnimatePresence>
+
+                    {/* Menu Link Text */}
+                    <span className="relative z-10">{item.name}</span>
+
+                    {/* Active Route Premium Underline Indicator */}
+                    {active && (
+                      <motion.span
+                        layoutId="activeUnderline"
+                        transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                        className="absolute bottom-0 left-3 right-3 h-[2.5px] bg-[#0e7490] rounded-full"
+                      />
+                    )}
+                  </Link>
+                );
+              })}
+            </nav>
+
+            {/* RIGHT SIDE: Direct Phone & Request a Quote CTA */}
+            <div className="hidden lg:flex items-center gap-5 shrink-0">
+              {/* Phone Link */}
+              <a
+                href={`tel:${BUSINESS_INFO.phone.replace(/\s+/g, "")}`}
+                className="flex items-center gap-2 text-slate-700 hover:text-[#0e7490] text-sm font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0e7490] rounded-md px-2 py-1 group"
+                title="Call Unistar Chemicals Desk"
+              >
+                <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-[#0e7490] group-hover:bg-[#0e7490] group-hover:text-white transition-colors duration-200">
+                  <Phone className="w-4 h-4" />
+                </div>
+                <span>{BUSINESS_INFO.phone}</span>
+              </a>
+
+              {/* Request a Quote Button */}
+              <button
+                onClick={() => setIsEnquiryOpen(true)}
+                type="button"
+                className="inline-flex items-center justify-center gap-2 px-4.5 py-2.5 bg-[#0e7490] hover:bg-[#0891b2] active:bg-[#155e75] text-white text-sm font-semibold rounded-lg shadow-sm hover:shadow-md hover:shadow-[#0e7490]/20 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0e7490] focus-visible:ring-offset-2 cursor-pointer group"
+              >
+                <span>Request a Quote</span>
+                <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+              </button>
+            </div>
+
+            {/* MOBILE CONTROLS */}
+            <div className="flex lg:hidden items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setIsEnquiryOpen(true)}
+                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-[#0e7490] text-white rounded-md shadow-sm"
+              >
+                <FileText className="w-3.5 h-3.5" />
+                <span>Quote</span>
+              </button>
+
+              {/* Mobile Hamburger Button */}
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                aria-expanded={mobileMenuOpen}
+                aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+                className="p-2 rounded-lg text-slate-700 hover:bg-slate-100 active:bg-slate-200 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0e7490]"
+              >
+                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </button>
+            </div>
+
           </div>
         </div>
-      </div>
+      </header>
 
-      {/* Mobile Drawer Navigation with Premium Slide Animation */}
+      {/* MOBILE DRAWER SLIDE-OVER */}
       <AnimatePresence>
         {mobileMenuOpen && (
-          <>
-            {/* Soft Backdrop overlay */}
+          <div className="fixed inset-0 z-50 lg:hidden">
+            {/* Translucent Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
-              animate={{ opacity: 0.4 }}
+              animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
               onClick={() => setMobileMenuOpen(false)}
-              className="fixed inset-0 bg-black/60 z-40 min-[992px]:hidden"
+              className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
+              aria-hidden="true"
             />
 
-            {/* Slide Panel from Right */}
+            {/* Mobile Drawer Panel */}
             <motion.div
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
-              transition={{ type: "tween", duration: 0.3, ease: [0.25, 1, 0.5, 1] }}
-              className="fixed inset-y-0 right-0 w-full sm:w-[400px] bg-white shadow-2xl z-50 flex flex-col p-6 min-[992px]:hidden"
+              transition={{ type: "spring", damping: 25, stiffness: 220 }}
+              className="absolute inset-y-0 right-0 w-full max-w-xs sm:max-w-sm bg-white shadow-2xl flex flex-col justify-between"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Mobile Navigation Drawer"
             >
-              {/* Header with Logo and Close Icon */}
-              <div className="flex items-center justify-between pb-6 border-b border-gray-100">
-                <img
-                  src="https://i.ibb.co/BH2rsRW2/Unistar-logo.png"
-                  alt="Unistar Chemicals"
-                  className="h-[44px] w-auto object-contain"
-                />
+              {/* Drawer Header */}
+              <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <img src={logoImg} alt="Unistar Chemicals" className="h-8 w-auto object-contain" />
+                  <div className="flex flex-col">
+                    <span className="font-extrabold text-slate-900 text-sm tracking-wider uppercase">
+                      UNISTAR CHEMICALS
+                    </span>
+                    <span className="text-[9px] font-semibold tracking-widest text-[#0e7490] uppercase">
+                      Corporate Navigation
+                    </span>
+                  </div>
+                </div>
+
                 <button
+                  type="button"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="p-2 text-gray-500 hover:text-[#123C74] rounded-lg hover:bg-gray-50 transition-colors"
-                  aria-label="Close Menu"
+                  aria-label="Close mobile navigation menu"
+                  className="p-2 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors"
                 >
-                  <X className="w-6 h-6" />
+                  <X className="w-5 h-5" />
                 </button>
               </div>
 
-              {/* Navigation Items - Large Spacing & Typography consistent with desktop */}
-              <nav className="flex flex-col gap-6 py-10 flex-grow font-sans">
-                <NavLink
-                  to="/"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={({ isActive }) =>
-                    `text-lg font-medium tracking-normal py-2 border-b border-gray-50 transition-colors ${
-                      isActive ? "text-[#123C74] font-bold" : "text-gray-600 hover:text-[#123C74]"
-                    }`
-                  }
-                  end
-                >
-                  Home
-                </NavLink>
-                <NavLink
-                  to="/about"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={({ isActive }) =>
-                    `text-lg font-medium tracking-normal py-2 border-b border-gray-50 transition-colors ${
-                      isActive ? "text-[#123C74] font-bold" : "text-gray-600 hover:text-[#123C74]"
-                    }`
-                  }
-                >
-                  About
-                </NavLink>
-                <NavLink
-                  to="/products"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={({ isActive }) =>
-                    `text-lg font-medium tracking-normal py-2 border-b border-gray-50 transition-colors ${
-                      isActive ? "text-[#123C74] font-bold" : "text-gray-600 hover:text-[#123C74]"
-                    }`
-                  }
-                >
-                  Products
-                </NavLink>
+              {/* Navigation Links */}
+              <div className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+                {NAV_ITEMS.map((item) => {
+                  const active = isPathActive(item.path);
 
-                <NavLink
-                  to="/media"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={({ isActive }) =>
-                    `text-lg font-medium tracking-normal py-2 border-b border-gray-50 transition-colors ${
-                      isActive ? "text-[#123C74] font-bold" : "text-gray-600 hover:text-[#123C74]"
-                    }`
-                  }
-                >
-                  Media Center
-                </NavLink>
-                <NavLink
-                  to="/contact"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={({ isActive }) =>
-                    `text-lg font-medium tracking-normal py-2 border-b border-gray-50 transition-colors ${
-                      isActive ? "text-[#123C74] font-bold" : "text-gray-600 hover:text-[#123C74]"
-                    }`
-                  }
-                >
-                  Contact
-                </NavLink>
-              </nav>
+                  return (
+                    <Link
+                      key={item.path}
+                      to={item.path}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center justify-between px-4 py-3 rounded-lg text-base font-semibold transition-colors min-h-[44px] ${
+                        active
+                          ? "bg-[#0e7490]/10 text-[#0e7490] font-bold"
+                          : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
+                      }`}
+                    >
+                      <span>{item.name}</span>
+                      <ChevronRight className={`w-4 h-4 ${active ? "text-[#0e7490]" : "text-slate-400"}`} />
+                    </Link>
+                  );
+                })}
+              </div>
 
-              {/* Footer Information in Drawer */}
-              <div className="pt-6 border-t border-gray-100 flex flex-col gap-6">
+              {/* Drawer Footer Actions */}
+              <div className="p-4 border-t border-slate-100 bg-slate-50/80 space-y-3">
                 <a
                   href={`tel:${BUSINESS_INFO.phone.replace(/\s+/g, "")}`}
-                  className="flex items-center gap-3 justify-center py-2 text-[#123C74] hover:opacity-85 transition-opacity"
+                  className="flex items-center justify-center gap-2.5 w-full py-3 px-4 bg-white border border-slate-200 text-slate-800 rounded-lg text-sm font-semibold shadow-sm hover:bg-slate-100 transition-colors min-h-[44px]"
                 >
-                  <Phone className="w-5 h-5 text-[#123C74]" />
-                  <span className="font-bold text-base font-sans">
-                    {BUSINESS_INFO.phone}
-                  </span>
+                  <Phone className="w-4 h-4 text-[#0e7490]" />
+                  <span>Call {BUSINESS_INFO.phone}</span>
                 </a>
 
                 <button
+                  type="button"
                   onClick={() => {
                     setMobileMenuOpen(false);
-                    setEnquiryModalOpen(true);
+                    setIsEnquiryOpen(true);
                   }}
-                  className="w-full h-12 bg-[#123C74] hover:bg-[#1D5A92] text-white rounded-[12px] font-bold text-sm tracking-wide transition-all shadow-md flex items-center justify-center gap-2 uppercase"
+                  className="flex items-center justify-center gap-2 w-full py-3 px-4 bg-[#0e7490] text-white rounded-lg text-sm font-bold shadow-md hover:bg-[#0891b2] transition-colors min-h-[44px]"
                 >
-                  Request a Quote
+                  <span>Request a Quote</span>
+                  <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
             </motion.div>
-          </>
+          </div>
         )}
       </AnimatePresence>
 
-      {/* Embedded Enquiry Modal */}
+      {/* Global Quote Request Enquiry Modal */}
       <EnquiryModal
-        isOpen={enquiryModalOpen}
-        onClose={() => setEnquiryModalOpen(false)}
-        productName="General Industrial Chemical Bulk Supply"
+        isOpen={isEnquiryOpen}
+        onClose={() => setIsEnquiryOpen(false)}
+        productName="General Industrial Chemical Quote Request"
       />
-    </header>
+    </>
   );
 }

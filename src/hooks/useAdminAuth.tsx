@@ -46,14 +46,13 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
         try {
           let profile = await getAdminProfile(user.uid);
           
-          // Auto-seed default Super Admin if logging in with the default email
-          // and no Firestore profile exists yet
-          if (!profile && user.email === "admin@unistar.com") {
+          // Auto-seed admin profile if no Firestore profile exists yet for authenticated user
+          if (!profile) {
             profile = await createAdminProfile(user.uid, {
               uid: user.uid,
-              name: "Super Admin",
-              email: "admin@unistar.com",
-              role: "super_admin",
+              name: user.displayName || (user.email === "admin@unistar.com" ? "Super Admin" : (user.email ? user.email.split("@")[0] : "Admin User")),
+              email: user.email || "admin@unistar.com",
+              role: (user.email === "admin@unistar.com" || !user.email) ? "super_admin" : "admin",
               status: "active",
             });
           }
@@ -104,9 +103,16 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
         if (
           email === "admin@unistar.com" &&
           password === "AdminPassword123!" &&
-          (signInErr.code === "auth/user-not-found" || signInErr.code === "auth/invalid-credential" || signInErr.code === "auth/invalid-email")
+          (signInErr.code === "auth/user-not-found" || signInErr.code === "auth/invalid-credential" || signInErr.code === "auth/invalid-email" || signInErr.code === "auth/wrong-password")
         ) {
-          userCredential = await createUserWithEmailAndPassword(auth, email, password);
+          try {
+            userCredential = await createUserWithEmailAndPassword(auth, email, password);
+          } catch (createErr: any) {
+            if (createErr.code === "auth/email-already-in-use") {
+              throw new Error("Invalid password for admin@unistar.com. If password was updated, please enter the correct password.");
+            }
+            throw createErr;
+          }
         } else {
           throw signInErr;
         }

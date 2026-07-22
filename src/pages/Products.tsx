@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, SlidersHorizontal, AlertCircle, FileText, ChevronRight, Download, Loader2 } from "lucide-react";
-import { CATEGORIES, Product } from "../productsData";
+import { CATEGORIES, Product, PRODUCTS } from "../productsData";
 import { getCategoryColor, getCategoryIcon } from "../utils/categoryHelpers";
 import { productService } from "../services/productService";
 import EnquiryModal from "../components/EnquiryModal";
@@ -19,11 +19,25 @@ export default function Products() {
 
   useEffect(() => {
     const fetchLiveProducts = async () => {
+      const staticList = PRODUCTS.map(p => ({
+        ...p,
+        slug: p.id,
+        isPublished: true,
+        featured: false,
+        images: p.image ? [p.image] : [],
+        specifications: p.keyBenefits
+      }));
+
       try {
         const liveList = await productService.getProducts(false); // Only published ones
-        setProducts(liveList);
+        if (liveList && liveList.length > 0) {
+          setProducts(liveList);
+        } else {
+          setProducts(staticList);
+        }
       } catch (err) {
         console.error("Failed to load products from Firestore:", err);
+        setProducts(staticList);
       } finally {
         setLoading(false);
       }

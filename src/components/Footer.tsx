@@ -44,12 +44,6 @@ export default function Footer() {
         {/* Brand Column */}
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-3">
-            <img
-              src="https://i.ibb.co/BH2rsRW2/Unistar-logo.png"
-              alt="Unistar Chemicals Logo"
-              className="w-8 h-8 object-contain"
-              referrerPolicy="no-referrer"
-            />
             <span className="font-extrabold text-xl tracking-wider text-white uppercase font-sans">
               Unistar Chemicals
             </span>
@@ -71,13 +65,18 @@ export default function Footer() {
               </NavLink>
             </li>
             <li>
-              <NavLink to="/about" className="hover:text-white transition-colors">
-                ABOUT UNISTAR
+              <NavLink to="/quality" className="hover:text-white transition-colors">
+                QUALITY & STANDARDS
               </NavLink>
             </li>
             <li>
               <NavLink to="/products" className="hover:text-white transition-colors">
                 PRODUCTS CATALOGUE
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/careers" className="hover:text-white transition-colors">
+                CAREERS
               </NavLink>
             </li>
 

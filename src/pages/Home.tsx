@@ -4,7 +4,6 @@ import { ChevronRight } from "lucide-react";
 import EnquiryModal from "../components/EnquiryModal";
 import Hero from "../components/Hero";
 import TrustBar from "../components/TrustBar";
-import Industries from "../components/Industries";
 
 export default function Home() {
   const [enquiryModalOpen, setEnquiryModalOpen] = useState(false);
@@ -41,10 +40,10 @@ export default function Home() {
           </p>
           <div className="pt-4 self-center">
             <Link
-              to="/about"
+              to="/quality"
               className="inline-flex items-center gap-2 px-6 py-3.5 bg-[#123C74] hover:bg-[#1E5A93] text-white rounded font-extrabold text-xs tracking-widest uppercase transition-all shadow-md group"
             >
-              <span>Read Full Profile</span>
+              <span>Read Quality & Profile</span>
               <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
@@ -115,7 +114,7 @@ export default function Home() {
           
           <div className="text-center pt-2">
             <Link
-              to="/about"
+              to="/quality"
               className="inline-flex items-center gap-2 px-6 py-3.5 bg-white hover:bg-gray-50 text-[#123C74] border-2 border-[#123C74] rounded font-extrabold text-xs tracking-widest uppercase transition-all shadow-sm"
             >
               <span>Explore Our Infrastructure</span>
@@ -125,21 +124,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 5. Industries Section - Recreated Exactly From Reference */}
-      <Industries />
-
-      {/* Industries CTA Link */}
-      <div className="bg-gray-50/60 pb-20 border-b border-gray-100 text-center -mt-16 relative z-10">
-        <Link
-          to="/about"
-          className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#123C74] hover:bg-[#1E5A93] text-white rounded font-extrabold text-xs tracking-widest uppercase transition-all shadow-md group"
-        >
-          <span>Explore Company Operations</span>
-          <ChevronRight className="w-4.5 h-4.5 group-hover:translate-x-1 transition-transform" />
-        </Link>
-      </div>
-
-      {/* 6. Corporate Call-To-Action */}
+      {/* 5. Corporate Call-To-Action */}
       <section className="relative py-24 px-4 bg-gradient-to-br from-[#123C74] to-[#0D2951] text-white text-center overflow-hidden">
         {/* Soft chemistry overlay in CTA */}
         <div className="absolute inset-0 pointer-events-none opacity-[0.04] z-0 overflow-hidden">
