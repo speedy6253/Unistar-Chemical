@@ -103,24 +103,33 @@ export default function CatalogueDownloadModal({ isOpen, onClose }: CatalogueDow
   };
 
   const triggerPdfDownload = async () => {
+    const pdfUrl = APP_CONFIG.cataloguePdfUrl;
     try {
-      const response = await fetch(APP_CONFIG.cataloguePdfUrl);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch PDF (status: ${response.status})`);
+      const response = await fetch(pdfUrl);
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "Unistar_Chemicals_Product_Catalogue.pdf";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        return;
       }
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "Unistar_Chemicals_Product_Catalogue.pdf";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-    } catch (err: any) {
-      console.error("Direct PDF download failed:", err);
-      throw new Error("Unable to download the Product Catalogue PDF from our secure servers. Please check your internet connection and try again.");
+    } catch (err) {
+      console.warn("Direct blob fetch warning, using anchor download fallback:", err);
     }
+
+    // Direct anchor click fallback for static PDF downloading
+    const link = document.createElement("a");
+    link.href = pdfUrl;
+    link.download = "Unistar_Chemicals_Product_Catalogue.pdf";
+    link.target = "_blank";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const handleSubmit = async (e: FormEvent) => {

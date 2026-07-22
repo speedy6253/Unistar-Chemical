@@ -44,6 +44,7 @@ export default function Footer() {
         {/* Brand Column */}
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-3">
+            <img src={BUSINESS_INFO.logoUrl} alt="Unistar Chemicals Logo" className="h-9 w-auto object-contain bg-white/10 p-1 rounded" />
             <span className="font-extrabold text-xl tracking-wider text-white uppercase font-sans">
               Unistar Chemicals
             </span>

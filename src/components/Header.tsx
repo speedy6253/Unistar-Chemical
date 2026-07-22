@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Phone, Menu, X, ArrowRight, FileText, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
-import logoImg from "../assets/logo.png";
+const logoImg = "https://i.ibb.co/0jhNbdNL/logo.png";
 import { BUSINESS_INFO } from "../productsData";
 import EnquiryModal from "./EnquiryModal";
 

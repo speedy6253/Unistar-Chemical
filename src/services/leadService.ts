@@ -167,8 +167,12 @@ async function sendServerEmailNotification(payload: {
     if (!response.ok) {
       console.warn(`[EMAIL WARNING] Background server email endpoint returned HTTP ${response.status}`);
     } else {
-      const data = await response.json();
-      console.log("[EMAIL SUCCESS] Background email notification logged/sent:", data);
+      try {
+        const data = await response.json();
+        console.log("[EMAIL SUCCESS] Background email notification logged/sent:", data);
+      } catch (jsonErr) {
+        console.warn("[EMAIL WARNING] Background email endpoint returned non-JSON body:", jsonErr);
+      }
     }
   } catch (error) {
     // Non-blocking: background email failure must NOT interrupt visitor or throw exception

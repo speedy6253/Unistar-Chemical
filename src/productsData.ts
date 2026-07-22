@@ -28,6 +28,7 @@ export const INDUSTRIES = [
 
 export const BUSINESS_INFO = {
   companyName: "Unistar Chemicals",
+  logoUrl: "https://i.ibb.co/0jhNbdNL/logo.png",
   headOffice: "B6-152/NEW UNION BOARD, Kolkata – 700141",
   corporateOffice: "Mraj Premiere, EN-37, Sector V, Kolkata, West Bengal – 700091",
   email: "info@unistarchemicals.in",
