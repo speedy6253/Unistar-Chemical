@@ -269,6 +269,24 @@ METADATA:
           },
         });
 
+        console.log(`[SMTP DIAGNOSTICS] Verifying SMTP connection: host=${smtpHost}, port=${smtpPort}, secure=${smtpSecure}, user=${smtpUser}`);
+
+        try {
+          await transporter.verify();
+          console.log(`[SMTP DIAGNOSTICS] Verification SUCCESS: host=${smtpHost}, port=${smtpPort}, secure=${smtpSecure}, authResult=AUTHENTICATED`);
+        } catch (verifyError: any) {
+          console.error(`[SMTP DIAGNOSTICS] Verification FAILED:`);
+          console.error(`- SMTP Host: ${smtpHost}`);
+          console.error(`- SMTP Port: ${smtpPort}`);
+          console.error(`- Secure: ${smtpSecure}`);
+          console.error(`- Authentication Result: FAILED`);
+          console.error(`- Exact Error Code: ${verifyError.code || "N/A"}`);
+          console.error(`- Exact Error Message: ${verifyError.message || verifyError}`);
+          if (verifyError.command) console.error(`- SMTP Command: ${verifyError.command}`);
+          if (verifyError.response) console.error(`- SMTP Response: ${verifyError.response}`);
+          if (verifyError.responseCode) console.error(`- Response Code: ${verifyError.responseCode}`);
+        }
+
         const mailOptions = {
           from: `"Unistar Web Enquiry" <${smtpUser}>`,
           to: recipient,

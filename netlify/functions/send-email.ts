@@ -216,6 +216,24 @@ Time: ${timestamp}`;
         },
       });
 
+      console.log(`[SMTP DIAGNOSTICS] Verifying SMTP connection: host=${smtpHost}, port=${smtpPort}, secure=${smtpSecure}, user=${smtpUser}`);
+
+      try {
+        await transporter.verify();
+        console.log(`[SMTP DIAGNOSTICS] Verification SUCCESS: host=${smtpHost}, port=${smtpPort}, secure=${smtpSecure}, authResult=AUTHENTICATED`);
+      } catch (verifyError: any) {
+        console.error(`[SMTP DIAGNOSTICS] Verification FAILED:`);
+        console.error(`- SMTP Host: ${smtpHost}`);
+        console.error(`- SMTP Port: ${smtpPort}`);
+        console.error(`- Secure: ${smtpSecure}`);
+        console.error(`- Authentication Result: FAILED`);
+        console.error(`- Exact Error Code: ${verifyError.code || "N/A"}`);
+        console.error(`- Exact Error Message: ${verifyError.message || verifyError}`);
+        if (verifyError.command) console.error(`- SMTP Command: ${verifyError.command}`);
+        if (verifyError.response) console.error(`- SMTP Response: ${verifyError.response}`);
+        if (verifyError.responseCode) console.error(`- Response Code: ${verifyError.responseCode}`);
+      }
+
       const mailOptions = {
         from: `"Unistar Web Enquiry" <${smtpUser}>`,
         to: recipient,
@@ -224,12 +242,39 @@ Time: ${timestamp}`;
         html: htmlBody,
       };
 
-      await transporter.sendMail(mailOptions);
-      return {
-        statusCode: 200,
-        headers,
-        body: JSON.stringify({ success: true, delivered: true, recipient, appId }),
-      };
+      try {
+        await transporter.sendMail(mailOptions);
+        console.log(`[SMTP DIAGNOSTICS] sendMail SUCCESS for ${appId} to ${recipient}`);
+        return {
+          statusCode: 200,
+          headers,
+          body: JSON.stringify({ success: true, delivered: true, recipient, appId }),
+        };
+      } catch (sendError: any) {
+        console.error(`[SMTP DIAGNOSTICS] sendMail FAILED:`);
+        console.error(`- SMTP Host: ${smtpHost}`);
+        console.error(`- SMTP Port: ${smtpPort}`);
+        console.error(`- Secure: ${smtpSecure}`);
+        console.error(`- Authentication Result: FAILED`);
+        console.error(`- Exact Error Code: ${sendError.code || "N/A"}`);
+        console.error(`- Exact Error Message: ${sendError.message || sendError}`);
+        if (sendError.command) console.error(`- SMTP Command: ${sendError.command}`);
+        if (sendError.response) console.error(`- SMTP Response: ${sendError.response}`);
+        if (sendError.responseCode) console.error(`- Response Code: ${sendError.responseCode}`);
+
+        return {
+          statusCode: 200,
+          headers,
+          body: JSON.stringify({
+            success: true,
+            delivered: false,
+            recipient,
+            appId,
+            error: sendError.message || "sendMail failed",
+            errorCode: sendError.code,
+          }),
+        };
+      }
     } else {
       console.log(`[NETLIFY FUNCTION EMAIL LOGGED FOR ${recipient}] Subject: ${subject}`);
       return {
